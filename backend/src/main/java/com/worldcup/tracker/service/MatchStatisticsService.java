@@ -35,3 +35,8 @@ public class MatchStatisticsService {
         statistiqueMatchService.updateMatchStatistics(matchId, equipeId, possession, shots, shotsOnTarget);
     }
 }
+import com.worldcup.tracker.dto.MatchStatisticsDTO;
+
+public interface MatchStatisticsService {
+    MatchStatisticsDTO getStatisticsForMatch(Long matchId);
+}

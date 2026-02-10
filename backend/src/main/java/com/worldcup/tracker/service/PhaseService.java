@@ -36,3 +36,9 @@ public class PhaseService {
         return phaseCompetitionService.getOrderedBySequence();
     }
 }
+import com.worldcup.tracker.dto.PhaseDTO;
+import java.util.List;
+
+public interface PhaseService {
+    List<PhaseDTO> getAllPhases();
+}

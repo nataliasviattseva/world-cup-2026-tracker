@@ -27,15 +27,74 @@ Users can view matches, scores, match status, and navigate through all competiti
 
 ## Technologies Used
 ### Front-end
-- (e.g.) HTML, CSS, JavaScript
-- (e.g.) React / Vue / Angular
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- Radix UI
 
 ### Back-end
-- (e.g.) Node.js / Spring Boot
-- REST API
+- Java 17
+- Spring Boot 3
+- Spring Data JPA
+- MySQL
 
 ### Data
-- Public API / simulated API / mocked real-time data
+- MySQL Database
+
+---
+
+## 🚀 How to Run the Project
+
+### Prerequisites
+- **Java JDK 17** or higher
+- **Node.js** (v18+ recommended) and **npm**
+- **MySQL Server** running locally
+
+### 1. Database Setup
+1. Open your MySQL client (Workbench, CLI, etc.).
+2. Create a new database named `tracker_database`:
+   ```sql
+   CREATE DATABASE tracker_database;
+   ```
+3. Verify the database credentials in `backend/src/main/resources/application.properties`:
+   - Default username: `User2025ensitech?`
+   - Default password: `User2025ensitech?`
+   - *Update these values if your local MySQL configuration is different.*
+
+### 2. Backend Setup (Spring Boot)
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Run the application using Maven:
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+   (On Windows, use `mvnw.cmd spring-boot:run` or just open the project in IntelliJ IDEA/Eclipse and run the main application class).
+
+   The backend API will start on **http://localhost:8080**.
+
+### 3. Frontend Setup (React + Vite)
+1. Open a new terminal and navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+   The frontend application will start (usually on **http://localhost:5173**).
+
+### 4. Access the Application
+- Open your browser and go to the URL provided by the frontend terminal (e.g., `http://localhost:5173`).
+- You can now navigate through the World Cup 2026 phases and matches.
+
 
 ---
 
