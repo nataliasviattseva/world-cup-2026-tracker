@@ -3,14 +3,13 @@ package com.worldcup.tracker.service.impl;
 import com.worldcup.tracker.dto.PhaseDTO;
 import com.worldcup.tracker.model.PhaseCompetition;
 import com.worldcup.tracker.repository.PhaseCompetitionRepository;
-import com.worldcup.tracker.service.PhaseService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PhaseServiceImpl implements PhaseService {
+public class PhaseServiceImpl implements PhaseServicetod {
 
     private final PhaseCompetitionRepository phaseRepository;
 
