@@ -11,6 +11,17 @@ public interface MatchService {
 
     Match getEntityById(Long id);
 
+    List<Match> getAll();
+    
+    List<Match> getAllMatches(); // Alias for controller compatibility
+
+    List<Match> getAllOrderedByKickoff();
+
+    List<Match> getByPhase(Long phaseId);
+    
+    List<Match> getMatchesByPhase(String phase); // Alias for controller compatibility
+    
+    Match getMatchById(Long id); // Alias for controller compatibility
     List<MatchDTO> getAllMatches();
 
     List<Match> getAllOrderedByKickoff();

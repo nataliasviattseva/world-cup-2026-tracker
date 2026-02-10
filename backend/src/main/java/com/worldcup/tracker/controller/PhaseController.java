@@ -1,5 +1,11 @@
 package com.worldcup.tracker.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
+import com.worldcup.tracker.model.PhaseCompetition;
+import com.worldcup.tracker.service.PhaseCompetitionService;
 import com.worldcup.tracker.dto.PhaseDTO;
 import com.worldcup.tracker.service.PhaseService;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,14 +20,14 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class PhaseController {
 
-    private final PhaseService phaseService;
+    private final PhaseCompetitionService phaseCompetitionService;
 
-    public PhaseController(PhaseService phaseService) {
-        this.phaseService = phaseService;
+    public PhaseController(PhaseCompetitionService phaseCompetitionService) {
+        this.phaseCompetitionService = phaseCompetitionService;
     }
 
     @GetMapping
-    public List<PhaseDTO> getAllPhases() {
-        return phaseService.getAllPhases();
+    public List<PhaseCompetition> getAllPhases() {
+        return phaseCompetitionService.getAll();
     }
 }

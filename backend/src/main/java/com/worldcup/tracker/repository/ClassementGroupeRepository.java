@@ -9,8 +9,10 @@ import com.worldcup.tracker.model.ClassementGroupe;
 
 public interface ClassementGroupeRepository extends JpaRepository<ClassementGroupe, Long> {
 
-    List<ClassementGroupe> findByGroupeIdOrderByPointsDescDifferenceButsDesc(Long groupeId);
+    List<ClassementGroupe> findByGroupeNomOrderByPointsDescDifferenceButsDesc(String groupeNom);
 
-    Optional<ClassementGroupe> findByGroupeIdAndEquipeId(Long groupeId, Long equipeId);
+    Optional<ClassementGroupe> findByGroupeNomAndEquipeId(String groupeNom, Long equipeId);
+
+    List<ClassementGroupe> findByGroupeNomOrderByPositionAsc(String groupeNom);
 
 }

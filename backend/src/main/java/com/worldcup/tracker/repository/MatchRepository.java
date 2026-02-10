@@ -15,6 +15,9 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     // By phase
     List<Match> findByPhaseIdOrderByDateHeureAsc(Long phaseId);
+    
+    // By phase name
+    List<Match> findByPhaseNomOrderByDateHeureAsc(String phaseName);
 
     // By group (GROUP A, B, C…)
     List<Match> findByGroupeOrderByDateHeureAsc(String groupe);
