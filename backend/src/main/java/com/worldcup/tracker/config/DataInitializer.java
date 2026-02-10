@@ -69,7 +69,8 @@ public class DataInitializer {
             equipes.put("Belgium", createEquipe(equipeRepository, "Belgium", "BEL", "🇧🇪"));
             equipes.put("France", createEquipe(equipeRepository, "France", "FRA", "🇫🇷"));
             equipes.put("Germany", createEquipe(equipeRepository, "Germany", "GER", "🇩🇪"));
-            equipes.put("TBD", createEquipe(equipeRepository, "TBD", "TBD", "🏳️"));
+            equipes.put("TBD_A", createEquipe(equipeRepository, "TBD", "TBA", "🏳️"));
+            equipes.put("TBD_B", createEquipe(equipeRepository, "TBD", "TBB", "🏳️"));
 
             // 4. Initialize Matches
 
@@ -139,14 +140,14 @@ public class DataInitializer {
                     null, null, StatutMatchEnum.A_VENIR);
 
             // TBD Matches
-            createMatch(matchRepository, phases.get(PhaseNomEnum.HUITIEMES_FINALE), equipes.get("TBD"), equipes.get("TBD"), stades.get("MetLife Stadium"), LocalDateTime.of(2026, Month.JUNE, 28, 16, 0), null, null, StatutMatchEnum.A_VENIR);
-            createMatch(matchRepository, phases.get(PhaseNomEnum.HUITIEMES_FINALE), equipes.get("TBD"), equipes.get("TBD"), stades.get("SoFi Stadium"), LocalDateTime.of(2026, Month.JUNE, 28, 20, 0), null, null, StatutMatchEnum.A_VENIR);
-            createMatch(matchRepository, phases.get(PhaseNomEnum.QUARTS_FINALE), equipes.get("TBD"), equipes.get("TBD"), stades.get("Hard Rock Stadium"), LocalDateTime.of(2026, Month.JULY, 9, 17, 0), null, null, StatutMatchEnum.A_VENIR);
-            createMatch(matchRepository, phases.get(PhaseNomEnum.QUARTS_FINALE), equipes.get("TBD"), equipes.get("TBD"), stades.get("AT&T Stadium"), LocalDateTime.of(2026, Month.JULY, 10, 17, 0), null, null, StatutMatchEnum.A_VENIR);
-            createMatch(matchRepository, phases.get(PhaseNomEnum.DEMI_FINALES), equipes.get("TBD"), equipes.get("TBD"), stades.get("AT&T Stadium"), LocalDateTime.of(2026, Month.JULY, 14, 20, 0), null, null, StatutMatchEnum.A_VENIR);
-            createMatch(matchRepository, phases.get(PhaseNomEnum.DEMI_FINALES), equipes.get("TBD"), equipes.get("TBD"), stades.get("Mercedes-Benz Stadium"), LocalDateTime.of(2026, Month.JULY, 15, 20, 0), null, null, StatutMatchEnum.A_VENIR);
-            createMatch(matchRepository, phases.get(PhaseNomEnum.PETITE_FINALE), equipes.get("TBD"), equipes.get("TBD"), stades.get("Hard Rock Stadium"), LocalDateTime.of(2026, Month.JULY, 18, 16, 0), null, null, StatutMatchEnum.A_VENIR);
-            createMatch(matchRepository, phases.get(PhaseNomEnum.FINALE), equipes.get("TBD"), equipes.get("TBD"), stades.get("MetLife Stadium"), LocalDateTime.of(2026, Month.JULY, 19, 15, 0), null, null, StatutMatchEnum.A_VENIR);
+            createMatch(matchRepository, phases.get(PhaseNomEnum.HUITIEMES_FINALE), equipes.get("TBD_A"), equipes.get("TBD_B"), stades.get("MetLife Stadium"), LocalDateTime.of(2026, Month.JUNE, 28, 16, 0), null, null, StatutMatchEnum.A_VENIR);
+            createMatch(matchRepository, phases.get(PhaseNomEnum.HUITIEMES_FINALE), equipes.get("TBD_A"), equipes.get("TBD_B"), stades.get("SoFi Stadium"), LocalDateTime.of(2026, Month.JUNE, 28, 20, 0), null, null, StatutMatchEnum.A_VENIR);
+            createMatch(matchRepository, phases.get(PhaseNomEnum.QUARTS_FINALE), equipes.get("TBD_A"), equipes.get("TBD_B"), stades.get("Hard Rock Stadium"), LocalDateTime.of(2026, Month.JULY, 9, 17, 0), null, null, StatutMatchEnum.A_VENIR);
+            createMatch(matchRepository, phases.get(PhaseNomEnum.QUARTS_FINALE), equipes.get("TBD_A"), equipes.get("TBD_B"), stades.get("AT&T Stadium"), LocalDateTime.of(2026, Month.JULY, 10, 17, 0), null, null, StatutMatchEnum.A_VENIR);
+            createMatch(matchRepository, phases.get(PhaseNomEnum.DEMI_FINALES), equipes.get("TBD_A"), equipes.get("TBD_B"), stades.get("AT&T Stadium"), LocalDateTime.of(2026, Month.JULY, 14, 20, 0), null, null, StatutMatchEnum.A_VENIR);
+            createMatch(matchRepository, phases.get(PhaseNomEnum.DEMI_FINALES), equipes.get("TBD_A"), equipes.get("TBD_B"), stades.get("Mercedes-Benz Stadium"), LocalDateTime.of(2026, Month.JULY, 15, 20, 0), null, null, StatutMatchEnum.A_VENIR);
+            createMatch(matchRepository, phases.get(PhaseNomEnum.PETITE_FINALE), equipes.get("TBD_A"), equipes.get("TBD_B"), stades.get("Hard Rock Stadium"), LocalDateTime.of(2026, Month.JULY, 18, 16, 0), null, null, StatutMatchEnum.A_VENIR);
+            createMatch(matchRepository, phases.get(PhaseNomEnum.FINALE), equipes.get("TBD_A"), equipes.get("TBD_B"), stades.get("MetLife Stadium"), LocalDateTime.of(2026, Month.JULY, 19, 15, 0), null, null, StatutMatchEnum.A_VENIR);
 
             System.out.println("Data initialization completed.");
         };

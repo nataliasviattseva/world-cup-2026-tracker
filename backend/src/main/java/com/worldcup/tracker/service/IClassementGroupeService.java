@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.worldcup.tracker.model.ClassementGroupe;
 
-public interface ClassementGroupeService {
+public interface IClassementGroupeService {
 
     ClassementGroupe getEntityById(Long id);
 

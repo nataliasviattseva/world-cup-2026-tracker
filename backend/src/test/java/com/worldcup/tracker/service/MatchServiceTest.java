@@ -16,6 +16,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.worldcup.tracker.dto.MatchDTO;
+import com.worldcup.tracker.dto.EquipeDTO;
+import com.worldcup.tracker.dto.PhaseCompetitionDTO;
+import com.worldcup.tracker.dto.StadeDTO;
+import com.worldcup.tracker.dto.DTOMapper;
 import com.worldcup.tracker.model.*;
 import com.worldcup.tracker.repository.MatchRepository;
 import com.worldcup.tracker.repository.PhaseCompetitionRepository;
@@ -56,10 +61,14 @@ public class MatchServiceTest {
     @Mock
     private PhaseCompetitionRepository phaseRepository;
     
+    @Mock
+    private DTOMapper dtoMapper;
+    
     @InjectMocks
     private MatchServiceImpl matchService;
     
     private Match testMatch;
+    private MatchDTO testMatchDTO;
     private Equipe equipe1;
     private Equipe equipe2;
     private PhaseCompetition phase;
@@ -100,6 +109,19 @@ public class MatchServiceTest {
             .stade(stade)
             .dateHeure(LocalDateTime.of(2026, 6, 15, 18, 0))
             .statut(StatutMatchEnum.A_VENIR)
+            .groupe("A")
+            .scoreEquipe1(0)
+            .scoreEquipe2(0)
+            .build();
+        
+        testMatchDTO = MatchDTO.builder()
+            .id(1L)
+            .equipe1(EquipeDTO.builder().id(1L).nom("Brazil").codePays("BRA").build())
+            .equipe2(EquipeDTO.builder().id(2L).nom("Germany").codePays("GER").build())
+            .phase(PhaseCompetitionDTO.builder().id(1L).nom(PhaseCompetitionDTO.PhaseNomDTO.PHASE_GROUPES).ordre(1).build())
+            .stade(StadeDTO.builder().id(1L).nom("Stadium 974").ville("Doha").build())
+            .dateHeure(LocalDateTime.of(2026, 6, 15, 18, 0))
+            .statut(MatchDTO.StatutMatchDTO.A_VENIR)
             .groupe("A")
             .scoreEquipe1(0)
             .scoreEquipe2(0)
@@ -212,15 +234,16 @@ public class MatchServiceTest {
         // Arrange
         String phaseName = "PHASE_GROUPES";
         List<Match> expectedMatches = List.of(testMatch);
-        when(matchRepository.findByPhaseNomOrderByDateHeureAsc(phaseName)).thenReturn(expectedMatches);
+        when(matchRepository.findAllByOrderByDateHeureAsc()).thenReturn(expectedMatches);
+        when(dtoMapper.mapToMatchDTO(testMatch)).thenReturn(testMatchDTO);
         
         // Act
-        List<Match> result = matchService.getMatchesByPhase(phaseName);
+        List<MatchDTO> result = matchService.getMatchesByPhase(phaseName);
         
         // Assert
         assertThat(result).hasSize(1);
-        assertThat(result).contains(testMatch);
-        verify(matchRepository).findByPhaseNomOrderByDateHeureAsc(phaseName);
+        assertThat(result).contains(testMatchDTO);
+        verify(matchRepository).findAllByOrderByDateHeureAsc();
     }
     
     @Test
@@ -231,7 +254,7 @@ public class MatchServiceTest {
         assertThat(matchService.getMatchesByPhase("")).isEmpty();
         assertThat(matchService.getMatchesByPhase("   ")).isEmpty();
         
-        verify(matchRepository, never()).findByPhaseNomOrderByDateHeureAsc(anyString());
+        verify(matchRepository, never()).findAllByOrderByDateHeureAsc();
     }
     
     @Test
@@ -241,13 +264,14 @@ public class MatchServiceTest {
         String groupe = "A";
         List<Match> expectedMatches = List.of(testMatch);
         when(matchRepository.findByGroupeOrderByDateHeureAsc(groupe)).thenReturn(expectedMatches);
+        when(dtoMapper.mapToMatchDTO(testMatch)).thenReturn(testMatchDTO);
         
         // Act
-        List<Match> result = matchService.getByGroupe(groupe);
+        List<MatchDTO> result = matchService.getByGroupe(groupe);
         
         // Assert
         assertThat(result).hasSize(1);
-        assertThat(result).contains(testMatch);
+        assertThat(result).contains(testMatchDTO);
         verify(matchRepository).findByGroupeOrderByDateHeureAsc(groupe);
     }
     
@@ -269,13 +293,14 @@ public class MatchServiceTest {
         StatutMatchEnum statut = StatutMatchEnum.A_VENIR;
         List<Match> expectedMatches = List.of(testMatch);
         when(matchRepository.findByStatutOrderByDateHeureAsc(statut)).thenReturn(expectedMatches);
+        when(dtoMapper.mapToMatchDTO(testMatch)).thenReturn(testMatchDTO);
         
         // Act
-        List<Match> result = matchService.getByStatut(statut);
+        List<MatchDTO> result = matchService.getByStatut(statut);
         
         // Assert
         assertThat(result).hasSize(1);
-        assertThat(result).contains(testMatch);
+        assertThat(result).contains(testMatchDTO);
         verify(matchRepository).findByStatutOrderByDateHeureAsc(statut);
     }
     
@@ -283,7 +308,7 @@ public class MatchServiceTest {
     @DisplayName("Should return empty list for null status")
     void shouldReturnEmptyListForNullStatus() {
         // Act
-        List<Match> result = matchService.getByStatut(null);
+        List<MatchDTO> result = matchService.getByStatut(null);
         
         // Assert
         assertThat(result).isEmpty();
@@ -296,13 +321,14 @@ public class MatchServiceTest {
         // Arrange
         List<Match> liveMatches = List.of(testMatch);
         when(matchRepository.findByStatutOrderByDateHeureAsc(StatutMatchEnum.EN_COURS)).thenReturn(liveMatches);
+        when(dtoMapper.mapToMatchDTO(testMatch)).thenReturn(testMatchDTO);
         
         // Act
-        List<Match> result = matchService.getLiveMatches();
+        List<MatchDTO> result = matchService.getLiveMatches();
         
         // Assert
         assertThat(result).hasSize(1);
-        assertThat(result).contains(testMatch);
+        assertThat(result).containsExactlyInAnyOrder(testMatchDTO);
         verify(matchRepository).findByStatutOrderByDateHeureAsc(StatutMatchEnum.EN_COURS);
     }
     
@@ -313,13 +339,14 @@ public class MatchServiceTest {
         Long equipeId = 1L;
         List<Match> expectedMatches = List.of(testMatch);
         when(matchRepository.findByEquipe1IdOrEquipe2Id(equipeId, equipeId)).thenReturn(expectedMatches);
+        when(dtoMapper.mapToMatchDTO(testMatch)).thenReturn(testMatchDTO);
         
         // Act
-        List<Match> result = matchService.getByEquipe(equipeId);
+        List<MatchDTO> result = matchService.getByEquipe(equipeId);
         
         // Assert
         assertThat(result).hasSize(1);
-        assertThat(result).contains(testMatch);
+        assertThat(result).contains(testMatchDTO);
         verify(matchRepository).findByEquipe1IdOrEquipe2Id(equipeId, equipeId);
     }
     
@@ -327,7 +354,7 @@ public class MatchServiceTest {
     @DisplayName("Should return empty list for null team ID")
     void shouldReturnEmptyListForNullTeamId() {
         // Act
-        List<Match> result = matchService.getByEquipe(null);
+        List<MatchDTO> result = matchService.getByEquipe(null);
         
         // Assert
         assertThat(result).isEmpty();
@@ -342,13 +369,14 @@ public class MatchServiceTest {
         LocalDateTime end = LocalDateTime.of(2026, 6, 30, 23, 59);
         List<Match> expectedMatches = List.of(testMatch);
         when(matchRepository.findByDateHeureBetweenOrderByDateHeureAsc(start, end)).thenReturn(expectedMatches);
+        when(dtoMapper.mapToMatchDTO(testMatch)).thenReturn(testMatchDTO);
         
         // Act
-        List<Match> result = matchService.getBetween(start, end);
+        List<MatchDTO> result = matchService.getBetween(start, end);
         
         // Assert
         assertThat(result).hasSize(1);
-        assertThat(result).contains(testMatch);
+        assertThat(result).contains(testMatchDTO);
         verify(matchRepository).findByDateHeureBetweenOrderByDateHeureAsc(start, end);
     }
     

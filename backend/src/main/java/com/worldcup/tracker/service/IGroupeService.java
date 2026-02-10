@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.worldcup.tracker.model.Groupe;
 
-public interface GroupeService {
+public interface IGroupeService {
 
     Groupe getEntityById(Long id);
 

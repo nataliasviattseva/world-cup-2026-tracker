@@ -8,7 +8,7 @@ import com.worldcup.tracker.model.Groupe;
 import com.worldcup.tracker.repository.GroupeRepository;
 
 @Service
-public class GroupeServiceImpl implements GroupeService {
+public class GroupeServiceImpl implements IGroupeService {
 
     private final GroupeRepository groupeRepository;
 

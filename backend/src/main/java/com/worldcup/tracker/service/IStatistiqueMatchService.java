@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.worldcup.tracker.model.StatistiqueMatch;
 
-public interface StatistiqueMatchService {
+public interface IStatistiqueMatchService {
 
     StatistiqueMatch getEntityById(Long id);
 

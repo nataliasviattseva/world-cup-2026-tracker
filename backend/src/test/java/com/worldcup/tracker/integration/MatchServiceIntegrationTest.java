@@ -14,8 +14,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.worldcup.tracker.dto.MatchDTO;
 import com.worldcup.tracker.model.*;
-import com.worldcup.tracker.service.MatchService;
+import com.worldcup.tracker.service.IMatchService;
 import com.worldcup.tracker.repository.*;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -46,7 +47,7 @@ import jakarta.persistence.EntityNotFoundException;
 public class MatchServiceIntegrationTest {
     
     @Autowired
-    private MatchService matchService;
+    private IMatchService matchService;
     
     @Autowired
     private MatchRepository matchRepository;
@@ -259,9 +260,9 @@ public class MatchServiceIntegrationTest {
         matchService.save(anotherMatch);
         
         // When
-        List<Match> brazilMatches = matchService.getByEquipe(equipe1.getId());
-        List<Match> germanyMatches = matchService.getByEquipe(equipe2.getId());
-        List<Match> franceMatches = matchService.getByEquipe(equipe3.getId());
+        List<MatchDTO> brazilMatches = matchService.getByEquipe(equipe1.getId());
+        List<MatchDTO> germanyMatches = matchService.getByEquipe(equipe2.getId());
+        List<MatchDTO> franceMatches = matchService.getByEquipe(equipe3.getId());
         
         // Then
         assertThat(brazilMatches).hasSize(2); // Brazil plays in both matches
@@ -299,12 +300,12 @@ public class MatchServiceIntegrationTest {
         matchService.save(finishedMatch);
         
         // When
-        List<Match> liveMatches = matchService.getLiveMatches();
+        List<MatchDTO> liveMatches = matchService.getLiveMatches();
         
-        // Then
-        assertThat(liveMatches).hasSize(1);
-        assertThat(liveMatches.get(0).getStatut()).isEqualTo(StatutMatchEnum.EN_COURS);
-        assertThat(liveMatches.get(0).getId()).isEqualTo(liveMatch.getId());
+        // Then - account for seed data that may also contain EN_COURS matches
+        assertThat(liveMatches).isNotEmpty();
+        assertThat(liveMatches).anyMatch(m -> m.getId().equals(liveMatch.getId()));
+        assertThat(liveMatches).allMatch(m -> m.getStatut() == MatchDTO.StatutMatchDTO.EN_COURS);
     }
     
     @Test
@@ -336,8 +337,8 @@ public class MatchServiceIntegrationTest {
         matchService.save(groupBMatch);
         
         // When
-        List<Match> groupAMatches = matchService.getByGroupe("A");
-        List<Match> groupBMatches = matchService.getByGroupe("B");
+        List<MatchDTO> groupAMatches = matchService.getByGroupe("A");
+        List<MatchDTO> groupBMatches = matchService.getByGroupe("B");
         
         // Then
         assertThat(groupAMatches).hasSize(1);
@@ -379,7 +380,7 @@ public class MatchServiceIntegrationTest {
         matchService.save(outsideMatch);
         
         // When
-        List<Match> matchesInRange = matchService.getBetween(startDate, endDate);
+        List<MatchDTO> matchesInRange = matchService.getBetween(startDate, endDate);
         
         // Then
         assertThat(matchesInRange).hasSize(1);

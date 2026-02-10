@@ -34,15 +34,11 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     // Time range + ordered
     List<Match> findByDateHeureBetweenOrderByDateHeureAsc(LocalDateTime start, LocalDateTime end);
 
-    List<Match> findAllByOrderByKickoffAsc();
+    // List<Match> findAllByOrderByDateHeureAsc();
 
     List<Match> findByPhaseId(Long phaseId);
 
     List<Match> findByGroupe(String groupe);
 
     List<Match> findByStatut(StatutMatchEnum statut);
-
-    List<Match> findByEquipeId(Long equipeId);
-
-    List<Match> findByKickoffBetween(LocalDateTime start, LocalDateTime end);
 }

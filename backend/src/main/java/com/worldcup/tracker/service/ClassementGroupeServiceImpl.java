@@ -8,7 +8,7 @@ import com.worldcup.tracker.model.ClassementGroupe;
 import com.worldcup.tracker.repository.ClassementGroupeRepository;
 
 @Service
-public class ClassementGroupeServiceImpl implements ClassementGroupeService {
+public class ClassementGroupeServiceImpl implements IClassementGroupeService {
 
     private final ClassementGroupeRepository classementRepository;
 
@@ -49,18 +49,20 @@ public class ClassementGroupeServiceImpl implements ClassementGroupeService {
     @Override
     public void updateClassement(String groupeNom) {
         List<ClassementGroupe> classements = getByGroupe(groupeNom);
-        
+
         // Sort by points, goal difference, goals scored
         classements.sort((c1, c2) -> {
             int pointsCompare = Integer.compare(c2.getPoints(), c1.getPoints());
-            if (pointsCompare != 0) return pointsCompare;
-            
+            if (pointsCompare != 0)
+                return pointsCompare;
+
             int diffCompare = Integer.compare(c2.getDifferenceButs(), c1.getDifferenceButs());
-            if (diffCompare != 0) return diffCompare;
-            
+            if (diffCompare != 0)
+                return diffCompare;
+
             return Integer.compare(c2.getButsPour(), c1.getButsPour());
         });
-        
+
         // Update positions
         for (int i = 0; i < classements.size(); i++) {
             classements.get(i).setPosition(i + 1);

@@ -9,7 +9,7 @@ import com.worldcup.tracker.model.StatistiqueMatch;
 import com.worldcup.tracker.repository.StatistiqueMatchRepository;
 
 @Service
-public class StatistiqueMatchServiceImpl implements StatistiqueMatchService {
+public class StatistiqueMatchServiceImpl implements IStatistiqueMatchService {
 
     private final StatistiqueMatchRepository statistiqueRepository;
 

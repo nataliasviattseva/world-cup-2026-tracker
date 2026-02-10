@@ -5,16 +5,16 @@ import java.util.List;
 import org.springframework.web.bind.annotation.*;
 
 import com.worldcup.tracker.model.ClassementGroupe;
-import com.worldcup.tracker.service.ClassementGroupeService;
+import com.worldcup.tracker.service.IClassementGroupeService;
 
 @RestController
 @RequestMapping("/api/standings")
 @CrossOrigin(origins = "*")
 public class ClassementGroupeController {
 
-    private final ClassementGroupeService classementService;
+    private final IClassementGroupeService classementService;
 
-    public ClassementGroupeController(ClassementGroupeService classementService) {
+    public ClassementGroupeController(IClassementGroupeService classementService) {
         this.classementService = classementService;
     }
 

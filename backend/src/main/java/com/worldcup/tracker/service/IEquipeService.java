@@ -3,16 +3,17 @@ package com.worldcup.tracker.service;
 import java.util.List;
 
 import com.worldcup.tracker.model.Equipe;
+import com.worldcup.tracker.dto.EquipeDTO;
 
-public interface EquipeService {
+public interface IEquipeService {
 
     Equipe getEntityById(Long id);
 
-    List<Equipe> getAll();
+    List<EquipeDTO> getAll();
 
-    List<Equipe> getByGroupe(String groupe);
+    List<EquipeDTO> getByGroupe(String groupe);
 
-    List<Equipe> getQualifiedTeams();
+    List<EquipeDTO> getQualifiedTeams();
 
     Equipe getByNom(String nom);
 
@@ -25,4 +26,5 @@ public interface EquipeService {
     List<Equipe> getTopTeamsByPoints(int limit);
 
     List<Equipe> getByGroupeOrderedByPoints(String groupe);
+
 }

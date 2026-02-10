@@ -1,24 +1,29 @@
 package com.worldcup.tracker.controller;
 
+import com.worldcup.tracker.model.Match;
+import com.worldcup.tracker.dto.MatchDTO;
+import com.worldcup.tracker.service.IMatchService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/matches")
 @CrossOrigin(origins = "*")
 public class MatchController {
 
-    private final MatchService matchService;
+    private final IMatchService matchService;
 
-    public MatchController(MatchService matchService) {
+    public MatchController(IMatchService matchService) {
         this.matchService = matchService;
     }
 
     @GetMapping
-    public List<Match> getAllMatches() {
+    public List<MatchDTO> getAllMatches() {
         return matchService.getAllMatches();
     }   
 

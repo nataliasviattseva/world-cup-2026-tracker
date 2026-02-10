@@ -5,7 +5,7 @@ import java.util.List;
 import com.worldcup.tracker.model.PhaseCompetition;
 import com.worldcup.tracker.model.PhaseNomEnum;
 
-public interface PhaseCompetitionService {
+public interface IPhaseCompetitionService {
 
     PhaseCompetition getEntityById(Long id);
 

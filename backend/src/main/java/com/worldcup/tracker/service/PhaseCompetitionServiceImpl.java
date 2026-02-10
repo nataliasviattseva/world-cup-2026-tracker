@@ -9,7 +9,7 @@ import com.worldcup.tracker.model.PhaseNomEnum;
 import com.worldcup.tracker.repository.PhaseCompetitionRepository;
 
 @Service
-public class PhaseCompetitionServiceImpl implements PhaseCompetitionService {
+public class PhaseCompetitionServiceImpl implements IPhaseCompetitionService {
 
     private final PhaseCompetitionRepository phaseRepository;
 
