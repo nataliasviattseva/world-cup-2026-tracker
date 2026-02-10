@@ -1,23 +1,30 @@
 package com.worldcup.tracker.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
+import com.worldcup.tracker.model.Equipe;
+import com.worldcup.tracker.service.EquipeService;
+
 @RestController
 @RequestMapping("/api/teams")
 @CrossOrigin(origins = "*")
 public class TeamController {
 
-    private final TeamService teamService;
+    private final EquipeService equipeService;
 
-    public TeamController(TeamService teamService) {
-        this.teamService = teamService;
+    public TeamController(EquipeService equipeService) {
+        this.equipeService = equipeService;
     }
 
     @GetMapping
-    public List<TeamDTO> getAllTeams() {
-        return teamService.getAllTeams();
+    public List<Equipe> getAllTeams() {
+        return equipeService.getAll();
     }
 
     @GetMapping("/{id}")
-    public TeamDTO getTeamById(@PathVariable Long id) {
-        return teamService.getTeamById(id);
+    public Equipe getTeamById(@PathVariable Long id) {
+        return equipeService.getEntityById(id);
     }
 }

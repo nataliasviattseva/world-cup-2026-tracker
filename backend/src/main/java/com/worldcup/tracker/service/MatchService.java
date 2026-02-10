@@ -3,6 +3,7 @@ package com.worldcup.tracker.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.worldcup.tracker.model.Match;
 import com.worldcup.tracker.model.StatutMatchEnum;
 
 public interface MatchService {
@@ -10,10 +11,16 @@ public interface MatchService {
     Match getEntityById(Long id);
 
     List<Match> getAll();
+    
+    List<Match> getAllMatches(); // Alias for controller compatibility
 
     List<Match> getAllOrderedByKickoff();
 
     List<Match> getByPhase(Long phaseId);
+    
+    List<Match> getMatchesByPhase(String phase); // Alias for controller compatibility
+    
+    Match getMatchById(Long id); // Alias for controller compatibility
 
     List<Match> getByGroupe(String groupe);
 

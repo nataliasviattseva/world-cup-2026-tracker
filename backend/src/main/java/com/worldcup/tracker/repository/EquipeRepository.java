@@ -12,6 +12,10 @@ public interface EquipeRepository extends JpaRepository<Equipe, Long> {
 
     Optional<Equipe> findByCodePaysIgnoreCase(String codePays);
 
-    List<Equipe> findByGroupeId(Long groupeId);
+    List<Equipe> findByGroupeNom(String groupeNom);
+    
+    List<Equipe> findAllByOrderByNomAsc();
+    
+    List<Equipe> findByGroupeNomOrderByNomAsc(String groupeNom);
 
 }

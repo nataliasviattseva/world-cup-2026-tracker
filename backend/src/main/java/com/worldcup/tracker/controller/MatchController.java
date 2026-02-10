@@ -1,10 +1,15 @@
 package com.worldcup.tracker.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.worldcup.tracker.model.Match;
+import com.worldcup.tracker.service.MatchService;
 
 @RestController
 @RequestMapping("/api/matches")
@@ -24,19 +29,19 @@ public class MatchController {
 
      // Matches by phase (GROUPS, QUARTER_FINAL, FINAL…)
     @GetMapping("/phase/{phase}")
-    public List<MatchDTO> getMatchesByPhase(@PathVariable String phase) {
+    public List<Match> getMatchesByPhase(@PathVariable String phase) {
         return matchService.getMatchesByPhase(phase);
     }
 
     // Match details
     @GetMapping("/{id}")
-    public MatchDTO getMatchById(@PathVariable Long id) {
+    public Match getMatchById(@PathVariable Long id) {
         return matchService.getMatchById(id);
     }
 
     // Live / ongoing matches
     @GetMapping("/live")
-    public List<MatchDTO> getLiveMatches() {
+    public List<Match> getLiveMatches() {
         return matchService.getLiveMatches();
     }
     
