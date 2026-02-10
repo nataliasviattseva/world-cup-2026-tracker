@@ -2,27 +2,67 @@ package com.worldcup.tracker.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.worldcup.tracker.model.Equipe;
+import com.worldcup.tracker.repository.EquipeRepository;
 
-public interface EquipeService {
+@Service
+public class EquipeService implements IEquipeService {
 
-    Equipe getEntityById(Long id);
+    private final EquipeRepository equipeRepository;
 
-    List<Equipe> getAll();
+    public EquipeService(EquipeRepository equipeRepository) {
+        this.equipeRepository = equipeRepository;
+    }
 
-    List<Equipe> getByGroupe(String groupe);
+    @Override
+    public Equipe getEntityById(Long id) {
+        return equipeRepository.findById(id).orElse(null);
+    }
 
-    List<Equipe> getQualifiedTeams();
+    @Override
+    public List<Equipe> getAll() {
+        return equipeRepository.findAll();
+    }
 
-    Equipe getByNom(String nom);
+    @Override
+    public List<Equipe> getByGroupe(String groupe) {
+        return equipeRepository.findByGroupeNom(groupe);
+    }
 
-    List<Equipe> getByPays(String pays);
+    @Override
+    public List<Equipe> getQualifiedTeams() {
+        return List.of();
+    }
 
-    Equipe save(Equipe equipe);
+    @Override
+    public Equipe getByNom(String nom) {
+        return equipeRepository.findByNomIgnoreCase(nom).orElse(null);
+    }
 
-    void delete(Long id);
+    @Override
+    public List<Equipe> getByPays(String pays) {
+        return equipeRepository.findByCodePaysIgnoreCase(pays).map(List::of).orElse(List.of());
+    }
 
-    List<Equipe> getTopTeamsByPoints(int limit);
+    @Override
+    public Equipe save(Equipe equipe) {
+        return equipeRepository.save(equipe);
+    }
 
-    List<Equipe> getByGroupeOrderedByPoints(String groupe);
+    @Override
+    public void delete(Long id) {
+        equipeRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Equipe> getTopTeamsByPoints(int limit) {
+        return equipeRepository.findAllByOrderByNomAsc().stream().limit(limit).toList();
+    }
+
+    @Override
+    public List<Equipe> getByGroupeOrderedByPoints(String groupe) {
+        return equipeRepository.findByGroupeNomOrderByNomAsc(groupe);
+    }
 }
