@@ -1,83 +1,48 @@
 package com.worldcup.tracker.service;
 
-import com.worldcup.tracker.model.Match;
-import com.worldcup.tracker.model.StatutMatchEnum;
-import com.worldcup.tracker.repository.MatchRepository;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
-public class MatchService implements IMatchService {
+import com.worldcup.tracker.model.Match;
+import com.worldcup.tracker.model.StatutMatchEnum;
+import com.worldcup.tracker.dto.MatchDTO;
 
-    private final MatchRepository matchRepository;
+public interface MatchService {
 
-    public MatchService(MatchRepository matchRepository) {
-        this.matchRepository = matchRepository;
-    }
+    Match getEntityById(Long id);
 
-    @Override
-    public Match getEntityById(Long id) {
-        return matchRepository.findById(id) .orElseThrow(() -> new RuntimeException("Match not found"));
-    }
+    List<Match> getAll();
+    
+    List<Match> getAllMatches(); // Alias for controller compatibility
 
-    @Override
-    public List<Match> getAll() {
-        return matchRepository.findAll();
-    }
+    List<Match> getAllOrderedByKickoff();
 
-    @Override
-    public List<Match> getAllOrderedByKickoff() {
-        return matchRepository.findAllByOrderByDateHeureAsc();
-    }
+    List<Match> getByPhase(Long phaseId);
+    
+    List<Match> getMatchesByPhase(String phase); // Alias for controller compatibility
+    
+    Match getMatchById(Long id); // Alias for controller compatibility
+    List<MatchDTO> getAllMatches();
 
-    @Override
-    public List<Match> getByPhase(Long phaseId) {
-        return matchRepository.findByPhaseId(phaseId);
-    }
+    List<Match> getAllOrderedByKickoff();
 
-    @Override
-    public List<Match> getByGroupe(String groupe) {
-        return matchRepository.findByGroupe(groupe);
-    }
+    List<MatchDTO> getMatchesByPhase(String phase);
 
-    @Override
-    public List<Match> getByStatut(StatutMatchEnum statut) {
-        return matchRepository.findByStatut(statut);
-    }
+    List<Match> getByGroupe(String groupe);
 
-    @Override
-    public List<Match> getLiveMatches() {
-        return matchRepository.findByStatut(StatutMatchEnum.EN_COURS);
-    }
+    List<Match> getByStatut(StatutMatchEnum statut);
 
-    @Override
-    public List<Match> getByEquipe(Long equipeId) {
-        return matchRepository.findByEquipe1IdOrEquipe2Id(equipeId, equipeId);
-    }
+    List<MatchDTO> getLiveMatches();
 
-    @Override
-    public List<Match> getBetween(LocalDateTime start, LocalDateTime end) {
-        return matchRepository.findByDateHeureBetween(start, end);
-    }
+    List<Match> getByEquipe(Long equipeId);
 
-    @Override
-    public Match save(Match match) {
-        return matchRepository.save(match);
-    }
+    List<Match> getBetween(LocalDateTime start, LocalDateTime end);
 
-    @Override
-    public Match updateScoreAndStatus(Long matchId, Integer score1, Integer score2, StatutMatchEnum statut) {
-        Match match = getEntityById(matchId);
-        match.setScoreEquipe1(score1);
-        match.setScoreEquipe2(score2);
-        match.setStatut(statut);
-        return matchRepository.save(match);
-    }
+    Match save(Match match);
 
-    @Override
-    public void delete(Long id) {
-        matchRepository.deleteById(id);
-    }
+    Match updateScoreAndStatus(Long matchId, Integer score1, Integer score2, StatutMatchEnum statut);
+
+    void delete(Long id);
+
+    MatchDTO getMatchById(Long id);
 }

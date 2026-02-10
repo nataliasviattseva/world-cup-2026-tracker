@@ -1,30 +1,39 @@
 package com.worldcup.tracker.controller;
 
-import com.worldcup.tracker.dto.TeamDTO;
-import com.worldcup.tracker.service.ITeamService;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.worldcup.tracker.model.Equipe;
+import com.worldcup.tracker.service.EquipeService;
+import com.worldcup.tracker.dto.TeamDTO;
+import com.worldcup.tracker.service.TeamService;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/teams")
 @CrossOrigin(origins = "*")
 public class TeamController {
 
-    private final ITeamService ITeamService;
+    private final EquipeService equipeService;
 
-    public TeamController(ITeamService ITeamService) {
-        this.ITeamService = ITeamService;
+    public TeamController(EquipeService equipeService) {
+        this.equipeService = equipeService;
     }
 
     @GetMapping
-    public List<TeamDTO> getAllTeams() {
-        return ITeamService.getAllTeams();
+    public List<Equipe> getAllTeams() {
+        return equipeService.getAll();
     }
 
     @GetMapping("/{id}")
-    public TeamDTO getTeamById(@PathVariable Long id) {
-        return ITeamService.getTeamById(id);
+    public Equipe getTeamById(@PathVariable Long id) {
+        return equipeService.getEntityById(id);
     }
 }
