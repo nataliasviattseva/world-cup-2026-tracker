@@ -1,5 +1,15 @@
 package com.worldcup.tracker.controller;
 
+import com.worldcup.tracker.dto.TeamDTO;
+import com.worldcup.tracker.service.TeamService;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/teams")
 @CrossOrigin(origins = "*")
