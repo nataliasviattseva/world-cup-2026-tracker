@@ -31,7 +31,13 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public Match getEntityById(Long id) {
+
         return matchRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Match> getAll() {
+        return List.of();
     }
 
     @Override
@@ -44,6 +50,11 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<Match> getAllOrderedByKickoff() {
         return matchRepository.findAllByOrderByDateHeureAsc();
+    }
+
+    @Override
+    public List<Match> getByPhase(Long phaseId) {
+        return List.of();
     }
 
     @Override
