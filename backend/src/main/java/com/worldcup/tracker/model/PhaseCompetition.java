@@ -28,4 +28,5 @@ public class PhaseCompetition {
     private String description;
 
     private Integer nombreMatchs;
+
 }

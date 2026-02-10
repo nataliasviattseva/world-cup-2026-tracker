@@ -1,5 +1,7 @@
 package com.worldcup.tracker.controller;
 
+import org.springframework.web.bind.annotation.*;
+
 @RestController
 @RequestMapping("/api/statistics")
 @CrossOrigin(origins = "*")
