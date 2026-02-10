@@ -11,10 +11,6 @@ permissions:
   contents: write
   security-events: write
 
-defaults:
-  run:
-    working-directory: ./backend
-
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
@@ -52,7 +48,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-m2-${{ hashFiles('backend/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-m2-
           
@@ -80,10 +76,10 @@ jobs:
         "
         
     - name: Validate Maven wrapper
-      run: chmod +x ../mvnw
+      run: chmod +x mvnw
       
     - name: Run tests
-      run: ../mvnw test --batch-mode --no-transfer-progress
+      run: ./mvnw -f backend/pom.xml test --batch-mode --no-transfer-progress
       env:
         SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
         SPRING_DATASOURCE_USERNAME: User2025ensitech?
@@ -93,16 +89,16 @@ jobs:
         
     - name: Validate test results
       run: |
-        if [ -f target/surefire-reports/TEST-*.xml ]; then
+        if [ -f backend/target/surefire-reports/TEST-*.xml ]; then
           echo "Test reports generated successfully"
-          TEST_COUNT=$(find target/surefire-reports -name "TEST-*.xml" | wc -l)
+          TEST_COUNT=$(find backend/target/surefire-reports -name "TEST-*.xml" | wc -l)
           echo "Found $TEST_COUNT test report files"
         else
           echo "No test reports found - tests may not have run properly"
         fi
         
     - name: Build application
-      run: ../mvnw clean package -DskipTests --batch-mode --no-transfer-progress
+      run: ./mvnw -f backend/pom.xml clean package -DskipTests --batch-mode --no-transfer-progress
       
     - name: Generate test report
       uses: dorny/test-reporter@v1
@@ -119,9 +115,9 @@ jobs:
       with:
         name: world-cup-tracker-${{ github.sha }}
         path: |
-          target/*.jar
-          !target/*-sources.jar
-          !target/*-javadoc.jar
+          backend/target/*.jar
+          !backend/target/*-sources.jar
+          !backend/target/*-javadoc.jar
         retention-days: 30
 
     # Security scan
@@ -163,19 +159,19 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         
     - name: Build production JAR
-      run: ../mvnw clean package -DskipTests --batch-mode --no-transfer-progress
+      run: ./mvnw -f backend/pom.xml clean package -DskipTests --batch-mode --no-transfer-progress
       
     - name: Validate JAR was created
       run: |
         shopt -s nullglob
-        files=(target/*.jar)
+        files=(backend/target/*.jar)
         if (( ${#files[@]} == 0 )); then
-            echo "JAR file not found in target directory"
-            ls -la target/
+            echo "JAR file not found in backend/target directory"
+            ls -la backend/target/
             exit 1
         fi
         echo "JAR file found:"
-        ls -la target/*.jar
+        ls -la backend/target/*.jar
       
     - name: Create production Dockerfile
       run: |
@@ -186,7 +182,7 @@ jobs:
         RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
         
         WORKDIR /app
-        COPY target/*.jar app.jar
+        COPY backend/target/*.jar app.jar
         
         # Create non-root user
         RUN addgroup --system spring && adduser --system --group spring
