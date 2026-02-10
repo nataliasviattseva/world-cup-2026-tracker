@@ -2,10 +2,14 @@ name: CI/CD - World Cup 2026 Tracker
 
 on:
   push:
-    branches: [ main, dev, feature/* ]
+    branches: [ main, dev, test, feature/* ]
   pull_request:
-    branches: [ main, dev ]
+    branches: [ main, test, dev ]
   workflow_dispatch: # Allow manual runs
+
+permissions:
+  contents: write
+  security-events: write
 
 defaults:
   run:
@@ -76,7 +80,7 @@ jobs:
         "
         
     - name: Validate Maven wrapper
-      run: chmod +x mvnw
+      run: chmod +x ../mvnw
       
     - name: Run tests
       run: ./mvnw test --batch-mode --no-transfer-progress
@@ -105,7 +109,7 @@ jobs:
       if: success() || failure()
       with:
         name: Maven Tests
-        path: backend/target/surefire-reports/*.xml
+        path: target/surefire-reports/*.xml
         reporter: java-junit
         fail-on-error: true
         
@@ -115,9 +119,9 @@ jobs:
       with:
         name: world-cup-tracker-${{ github.sha }}
         path: |
-          backend/target/*.jar
-          !backend/target/*-sources.jar
-          !backend/target/*-javadoc.jar
+          target/*.jar
+          !target/*-sources.jar
+          !target/*-javadoc.jar
         retention-days: 30
 
     # Security scan
@@ -125,7 +129,7 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
-        scan-ref: './backend'
+        scan-ref: './'
         format: 'sarif'
         output: 'trivy-results.sarif'
         
@@ -133,7 +137,7 @@ jobs:
       uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
-        sarif_file: 'trivy-results.sarif'
+        sarif_file: 'backend/trivy-results.sarif'
 
   # Deploy job (only runs on main branch)
   deploy:
@@ -163,12 +167,14 @@ jobs:
       
     - name: Validate JAR was created
       run: |
-        if [ ! -f target/*.jar ]; then
-          echo "JAR file not found in target directory"
-          ls -la target/
-          exit 1
+        shopt -s nullglob
+        files=(target/*.jar)
+        if (( ${#files[@]} == 0 )); then
+            echo "JAR file not found in target directory"
+            ls -la target/
+            exit 1
         fi
-        echo "JAR file found and ready for deployment"
+        echo "JAR file found:"
         ls -la target/*.jar
       
     - name: Create production Dockerfile
@@ -209,7 +215,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: docker-image-${{ github.sha }}
-        path: backend/world-cup-tracker-${{ github.sha }}.tar.gz
+        path: world-cup-tracker-${{ github.sha }}.tar.gz
         retention-days: 7
         
     - name: Create GitHub release
