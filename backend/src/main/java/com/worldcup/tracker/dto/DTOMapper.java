@@ -255,9 +255,4 @@ public class DTOMapper {
         if (standings == null) return null;
         return standings.stream().map(this::mapToGroupStandingDTO).collect(Collectors.toList());
     }
-
-    public Object toDTO(Match testMatch) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toDTO'");
-    }
 }
