@@ -16,6 +16,11 @@ public class MatchDTO {
     private String phase;
     private TeamDTO teamA;
     private TeamDTO teamB;
+
+    private Integer scoreTeam1;
+    private Integer scoreTeam2;
+
+    private String group;
     private String date;
     private String time;
     private String stadium;

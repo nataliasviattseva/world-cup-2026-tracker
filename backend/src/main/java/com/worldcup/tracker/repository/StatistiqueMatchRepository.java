@@ -13,7 +13,8 @@ public interface StatistiqueMatchRepository extends JpaRepository<StatistiqueMat
     List<StatistiqueMatch> findByEquipeId(Long equipeId);
 
     Optional<StatistiqueMatch> findByMatchIdAndEquipeId(Long matchId, Long equipeId);
-    List<StatistiqueMatch> findTopByShots(int limit);
+    List<StatistiqueMatch> findTop10ByOrderByTirsEquipe1Desc();
+
 
 
 }

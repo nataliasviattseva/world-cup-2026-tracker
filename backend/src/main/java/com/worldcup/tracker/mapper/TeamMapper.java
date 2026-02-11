@@ -8,7 +8,7 @@ public class TeamMapper {
         TeamDTO dto = new TeamDTO();
         dto.setId(equipe.getId());
         dto.setName(equipe.getNom());
-        dto.setFlagUrl(equipe.getDrapeauUrl());
+        dto.setFlag(equipe.getDrapeauUrl());
 
 
         return dto;

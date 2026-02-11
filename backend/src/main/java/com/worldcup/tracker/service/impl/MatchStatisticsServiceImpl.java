@@ -72,7 +72,7 @@ public class MatchStatisticsServiceImpl implements StatistiqueMatchService {
     @Override
     public List<StatistiqueMatch> getTopPerformances(String statType, int limit) {
         if ("shots".equalsIgnoreCase(statType)) {
-            return statisticsRepository.findTopByShots(limit);
+            return statisticsRepository.findTop10ByOrderByTirsEquipe1Desc();
         }
         return List.of();
     }
