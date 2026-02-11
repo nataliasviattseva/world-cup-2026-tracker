@@ -1,24 +1,34 @@
-name: CI/CD - World Cup 2026 Tracker
+﻿name: CI/CD - World Cup 2026 Tracker
 
+# ============================================================================
+# WORKFLOW TRIGGERS
+# ============================================================================
 on:
   push:
     branches: [ main, test, dev ]
   pull_request:
     branches: [ main, test, dev ]
-  workflow_dispatch: # Allow manual runs
+  workflow_dispatch:
 
+# ============================================================================
+# PERMISSIONS
+# ============================================================================
 permissions:
   contents: write
   security-events: write
   checks: write
   pull-requests: write
 
+# ============================================================================
+# JOBS
+# ============================================================================
 jobs:
-  test-and-build:
+  # ==========================================================================
+  # JOB 1: BACKEND TESTS
+  # ==========================================================================
+  test:
+    name: Backend Tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java-version: [17]
     
     services:
       mysql:
@@ -37,40 +47,34 @@ jobs:
           --health-retries=3
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK ${{ matrix.java-version }}
+    - name: Setup JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ matrix.java-version }}
-        distribution: 'temurin'
+        java-version: 17
+        distribution: temurin
         
-    - name: Cache Maven dependencies
+    - name: Cache Maven
       uses: actions/cache@v4
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('backend/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-m2-
-          
-    - name: Wait for MySQL to be ready
+        restore-keys: ${{ runner.os }}-m2-
+        
+    - name: Wait for MySQL
       run: |
         timeout=120
         while ! mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --silent; do
-          echo "Waiting for MySQL to start..."
+          echo "Waiting for MySQL..."
           sleep 2
           timeout=$((timeout-2))
-          if [ $timeout -le 0 ]; then
-            echo "MySQL failed to start within 120 seconds"
-            docker ps -a
-            docker logs $(docker ps -aq --filter ancestor=mysql:8.0) || true
-            exit 1
-          fi
+          [ $timeout -le 0 ] && echo "MySQL timeout" && exit 1
         done
-        echo "MySQL is ready!"
+        echo "MySQL ready!"
         
-    - name: Setup database schema
+    - name: Setup database
       run: |
         mysql -h127.0.0.1 -P3306 -uroot -proot -e "
           CREATE DATABASE IF NOT EXISTS tracker_database;
@@ -84,7 +88,7 @@ jobs:
       working-directory: backend
       
     - name: Run tests
-      run: ./mvnw test --batch-mode --no-transfer-progress
+      run: ./mvnw test --batch-mode --no-transfer-progress -Dspring.jpa.hibernate.ddl-auto=create
       working-directory: backend
       env:
         DB_URL: jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -92,17 +96,6 @@ jobs:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
         MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-        
-    - name: Verify test reports exist
-      run: |
-        if [ -d "target/surefire-reports" ]; then
-          echo "Test reports directory exists"
-          ls -la target/surefire-reports/
-        else
-          echo "Test reports directory not found!"
-          exit 1
-        fi
-      working-directory: backend
         
     - name: Generate test report
       uses: dorny/test-reporter@v1
@@ -112,107 +105,203 @@ jobs:
         path: backend/target/surefire-reports/*.xml
         reporter: java-junit
         fail-on-error: true
+
+  # ==========================================================================
+  # JOB 2: BUILD APPLICATION
+  # ==========================================================================
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: [test]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: temurin
         
-    - name: Build application
+    - name: Cache Maven
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('backend/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2-
+        
+    - name: Ensure Maven wrapper is executable
+      run: chmod +x mvnw
+      working-directory: backend
+        
+    - name: Build JAR
       run: ./mvnw clean package -DskipTests --batch-mode --no-transfer-progress
       working-directory: backend
       
-    - name: Upload build artifacts
-      if: success()
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: world-cup-tracker-${{ github.sha }}
+        name: app-jar-${{ github.sha }}
         path: |
           backend/target/*.jar
           !backend/target/*-sources.jar
           !backend/target/*-javadoc.jar
         retention-days: 30
 
-    # Security scan
-    - name: Run Trivy vulnerability scanner
+  # ==========================================================================
+  # JOB 3: SECURITY - OWASP BACKEND
+  # ==========================================================================
+  security-backend:
+    name: OWASP Backend Scan
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: temurin
+        
+    - name: Cache Maven
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('backend/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2-
+        
+    - name: Ensure Maven wrapper is executable
+      run: chmod +x mvnw
+      working-directory: backend
+        
+    - name: Run OWASP Check
+      run: ./mvnw dependency-check:check --batch-mode --no-transfer-progress
+      working-directory: backend
+      continue-on-error: true
+      
+    - name: Upload OWASP Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: owasp-backend-${{ github.sha }}
+        path: backend/target/dependency-check-report.*
+        retention-days: 30
+        if-no-files-found: warn
+
+  # ==========================================================================
+  # JOB 4: SECURITY - NPM AUDIT FRONTEND
+  # ==========================================================================
+  security-frontend:
+    name: npm Audit Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: npm
+        cache-dependency-path: frontend/package-lock.json
+        
+    - name: Install dependencies
+      run: npm ci
+      working-directory: frontend
+      
+    - name: Run npm audit
+      run: npm audit --json > npm-audit.json || true
+      working-directory: frontend
+      continue-on-error: true
+      
+    - name: Upload audit report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: npm-audit-${{ github.sha }}
+        path: frontend/npm-audit.json
+        retention-days: 30
+        if-no-files-found: warn
+
+  # ==========================================================================
+  # JOB 5: SECURITY - TRIVY SCANNER
+  # ==========================================================================
+  security-trivy:
+    name: Trivy Security Scan
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy scanner
       uses: aquasecurity/trivy-action@master
       with:
-        scan-type: 'fs'
-        scan-ref: './backend'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
+        scan-type: fs
+        scan-ref: ./backend
+        format: sarif
+        output: trivy-results.sarif
         
-    - name: Verify Trivy SARIF file exists
-      run: |
-        if [ -f "trivy-results.sarif" ]; then
-          echo "Trivy SARIF file generated successfully"
-          ls -lh trivy-results.sarif
-        else
-          echo "Warning: Trivy SARIF file not found"
-        fi
-        
-    - name: Upload Trivy scan results
+    - name: Upload Trivy results
       uses: github/codeql-action/upload-sarif@v4
-      if: always() && hashFiles('trivy-results.sarif') != ''
+      if: always()
       with:
-        sarif_file: 'trivy-results.sarif'
+        sarif_file: trivy-results.sarif
 
-  # Deploy job (only runs on main branch)
+  # ==========================================================================
+  # JOB 6: DEPLOY TO PRODUCTION
+  # ==========================================================================
   deploy:
+    name: Deploy to Production
     runs-on: ubuntu-latest
-    needs: [test-and-build]
+    needs: [test, build, security-backend, security-frontend, security-trivy]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: production
     
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK 17
+    - name: Setup JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
-        distribution: 'temurin'
+        java-version: 17
+        distribution: temurin
         
-    - name: Cache Maven dependencies
+    - name: Cache Maven
       uses: actions/cache@v4
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         
+    - name: Ensure Maven wrapper is executable
+      run: chmod +x mvnw
+      working-directory: backend
+        
     - name: Build production JAR
       run: ./mvnw clean package -DskipTests --batch-mode --no-transfer-progress
       working-directory: backend
       
-    - name: Validate JAR was created
-      run: |
-        shopt -s nullglob
-        files=(backend/target/*.jar)
-        if (( ${#files[@]} == 0 )); then
-            echo "JAR file not found in backend/target directory"
-            ls -la backend/target/
-            exit 1
-        fi
-        echo "JAR file found:"
-        ls -la backend/target/*.jar
-      
-    - name: Create production Dockerfile
+    - name: Create Dockerfile
       run: |
         cat > Dockerfile << 'EOF'
         FROM openjdk:17-jdk-slim
-        
-        # Install curl for health checks (if actuator is added later)
         RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-        
         WORKDIR /app
         COPY backend/target/*.jar app.jar
-        
-        # Create non-root user
         RUN addgroup --system spring && adduser --system --group spring
         RUN chown -R spring:spring /app
         USER spring:spring
-        
         EXPOSE 8080
-        
-        # Basic health check - check if process is running
-        HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-          CMD pgrep java || exit 1
-        
+        HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 CMD pgrep java || exit 1
         ENTRYPOINT ["java", "-jar", "/app/app.jar"]
         EOF
         
@@ -221,34 +310,25 @@ jobs:
         docker build -t world-cup-tracker:${{ github.sha }} .
         docker tag world-cup-tracker:${{ github.sha }} world-cup-tracker:latest
         
-    - name: Save Docker image as artifact
-      run: |
-        docker save world-cup-tracker:${{ github.sha }} | gzip > world-cup-tracker-${{ github.sha }}.tar.gz
+    - name: Save Docker image
+      run: docker save world-cup-tracker:${{ github.sha }} | gzip > docker-image.tar.gz
         
     - name: Upload Docker image
       uses: actions/upload-artifact@v4
       with:
         name: docker-image-${{ github.sha }}
-        path: world-cup-tracker-${{ github.sha }}.tar.gz
+        path: docker-image.tar.gz
         retention-days: 7
         
-    - name: Create GitHub release
+    - name: Create release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: v${{ github.run_number }}
-        name: World Cup Tracker v${{ github.run_number }}
+        name: Release v${{ github.run_number }}
         body: |
-          ## World Cup 2026 Tracker Release v${{ github.run_number }}
+          ## World Cup 2026 Tracker v${{ github.run_number }}
           
-          ### Changes
-          - Deployment from commit ${{ github.sha }}
-          - Backend Spring Boot application
-          
-          ### Artifacts
-          - JAR: Available in build artifacts
-          - Docker: world-cup-tracker:${{ github.sha }}
-          
-          ### Deployment
-          Automatically deployed from main branch.
+          **Commit:** ${{ github.sha }}
+          **Docker:** world-cup-tracker:${{ github.sha }}
         draft: false
         prerelease: false

@@ -57,6 +57,9 @@
       },
       "scripts": {
             "dev": "vite",
-            "build": "vite build"
+            "build": "vite build",
+            "audit": "npm audit",
+            "audit:fix": "npm audit fix",
+            "audit:production": "npm audit --production"
       }
 }
