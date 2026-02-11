@@ -7,10 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Month;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +23,8 @@ public class DataInitializer {
             PhaseCompetitionRepository phaseRepository,
             StadeRepository stadeRepository,
             MatchRepository matchRepository,
-            EvenementMatchRepository evenementMatchRepository) {
+            EvenementMatchRepository evenementMatchRepository,
+            GroupeRepository groupeRepository) {
         return args -> {
             // Check if data already exists
             if (matchRepository.count() > 0) {
@@ -33,6 +32,17 @@ public class DataInitializer {
             }
 
             System.out.println("Initializing sample data...");
+
+            // 0. Initialize Groups
+            Map<String, Groupe> groupes = new HashMap<>();
+            groupes.put("A", createGroupe(groupeRepository, "A", "Groupe A"));
+            groupes.put("B", createGroupe(groupeRepository, "B", "Groupe B"));
+            groupes.put("C", createGroupe(groupeRepository, "C", "Groupe C"));
+            groupes.put("D", createGroupe(groupeRepository, "D", "Groupe D"));
+            groupes.put("E", createGroupe(groupeRepository, "E", "Groupe E"));
+            groupes.put("F", createGroupe(groupeRepository, "F", "Groupe F"));
+            groupes.put("G", createGroupe(groupeRepository, "G", "Groupe G"));
+            groupes.put("H", createGroupe(groupeRepository, "H", "Groupe H"));
 
             // 1. Initialize Phases
             Map<PhaseNomEnum, PhaseCompetition> phases = new HashMap<>();
@@ -55,20 +65,20 @@ public class DataInitializer {
 
             // 3. Initialize Teams
             Map<String, Equipe> equipes = new HashMap<>();
-            equipes.put("Mexico", createEquipe(equipeRepository, "Mexico", "MEX", "🇲🇽"));
-            equipes.put("Costa Rica", createEquipe(equipeRepository, "Costa Rica", "CRC", "🇨🇷"));
-            equipes.put("Spain", createEquipe(equipeRepository, "Spain", "ESP", "🇪🇸"));
-            equipes.put("Portugal", createEquipe(equipeRepository, "Portugal", "POR", "🇵🇹"));
-            equipes.put("USA", createEquipe(equipeRepository, "USA", "USA", "🇺🇸"));
-            equipes.put("Canada", createEquipe(equipeRepository, "Canada", "CAN", "🇨🇦"));
-            equipes.put("Argentina", createEquipe(equipeRepository, "Argentina", "ARG", "🇦🇷"));
-            equipes.put("Uruguay", createEquipe(equipeRepository, "Uruguay", "URU", "🇺🇾"));
-            equipes.put("Brazil", createEquipe(equipeRepository, "Brazil", "BRA", "🇧🇷"));
-            equipes.put("Chile", createEquipe(equipeRepository, "Chile", "CHI", "🇨🇱"));
-            equipes.put("England", createEquipe(equipeRepository, "England", "ENG", "🏴󠁧󠁢󠁥󠁮󠁧󠁿"));
-            equipes.put("Belgium", createEquipe(equipeRepository, "Belgium", "BEL", "🇧🇪"));
-            equipes.put("France", createEquipe(equipeRepository, "France", "FRA", "🇫🇷"));
-            equipes.put("Germany", createEquipe(equipeRepository, "Germany", "GER", "🇩🇪"));
+            equipes.put("Mexico", createEquipeWithGroupe(equipeRepository, "Mexico", "MEX", "🇲🇽", "A", 15, "CONCACAF", groupes.get("A")));
+            equipes.put("Costa Rica", createEquipeWithGroupe(equipeRepository, "Costa Rica", "CRC", "🇨🇷", "A", 42, "CONCACAF", groupes.get("A")));
+            equipes.put("Spain", createEquipeWithGroupe(equipeRepository, "Spain", "ESP", "🇪🇸", "B", 8, "UEFA", groupes.get("B")));
+            equipes.put("Portugal", createEquipeWithGroupe(equipeRepository, "Portugal", "POR", "🇵🇹", "B", 9, "UEFA", groupes.get("B")));
+            equipes.put("USA", createEquipeWithGroupe(equipeRepository, "USA", "USA", "🇺🇸", "C", 13, "CONCACAF", groupes.get("C")));
+            equipes.put("Canada", createEquipeWithGroupe(equipeRepository, "Canada", "CAN", "🇨🇦", "C", 40, "CONCACAF", groupes.get("C")));
+            equipes.put("Argentina", createEquipeWithGroupe(equipeRepository, "Argentina", "ARG", "🇦🇷", "D", 1, "CONMEBOL", groupes.get("D")));
+            equipes.put("Uruguay", createEquipeWithGroupe(equipeRepository, "Uruguay", "URU", "🇺🇾", "D", 14, "CONMEBOL", groupes.get("D")));
+            equipes.put("Brazil", createEquipeWithGroupe(equipeRepository, "Brazil", "BRA", "🇧🇷", "E", 4, "CONMEBOL", groupes.get("E")));
+            equipes.put("Chile", createEquipeWithGroupe(equipeRepository, "Chile", "CHI", "🇨🇱", "E", 38, "CONMEBOL", groupes.get("E")));
+            equipes.put("England", createEquipeWithGroupe(equipeRepository, "England", "ENG", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "F", 5, "UEFA", groupes.get("F")));
+            equipes.put("Belgium", createEquipeWithGroupe(equipeRepository, "Belgium", "BEL", "🇧🇪", "F", 3, "UEFA", groupes.get("F")));
+            equipes.put("France", createEquipeWithGroupe(equipeRepository, "France", "FRA", "🇫🇷", "G", 2, "UEFA", groupes.get("G")));
+            equipes.put("Germany", createEquipeWithGroupe(equipeRepository, "Germany", "GER", "🇩🇪", "G", 11, "UEFA", groupes.get("G")));
             equipes.put("TBD_A", createEquipe(equipeRepository, "TBD", "TBA", "🏳️"));
             equipes.put("TBD_B", createEquipe(equipeRepository, "TBD", "TBB", "🏳️"));
 
@@ -178,6 +188,38 @@ public class DataInitializer {
                 .nom(nom)
                 .codePays(code)
                 .drapeauUrl(drapeau)
+                .build());
+    }
+
+    private Equipe createEquipeWithDetails(EquipeRepository repository, String nom, String code, String drapeau, 
+                                           String groupeCode, Integer fifaRanking, String confederation) {
+        return repository.save(Equipe.builder()
+                .nom(nom)
+                .codePays(code)
+                .drapeauUrl(drapeau)
+                .groupeCode(groupeCode)
+                .fifaRanking(fifaRanking)
+                .confederation(confederation)
+                .build());
+    }
+
+    private Equipe createEquipeWithGroupe(EquipeRepository repository, String nom, String code, String drapeau, 
+                                          String groupeCode, Integer fifaRanking, String confederation, Groupe groupe) {
+        return repository.save(Equipe.builder()
+                .nom(nom)
+                .codePays(code)
+                .drapeauUrl(drapeau)
+                .groupeCode(groupeCode)
+                .fifaRanking(fifaRanking)
+                .confederation(confederation)
+                .groupe(groupe)
+                .build());
+    }
+
+    private Groupe createGroupe(GroupeRepository repository, String lettre, String nom) {
+        return repository.save(Groupe.builder()
+                .lettre(lettre)
+                .nom(nom)
                 .build());
     }
 

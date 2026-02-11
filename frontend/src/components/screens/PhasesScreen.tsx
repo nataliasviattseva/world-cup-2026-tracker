@@ -67,11 +67,11 @@ export function PhasesScreen({ onNavigate }: PhasesScreenProps) {
         // Merge API data with static definitions
         const enrichedPhases = data.map((phase: any) => ({
           ...phase,
-          ...(PHASE_DEFINITIONS[phase.name] || {
+          ...(PHASE_DEFINITIONS[phase.nom] || {
             icon: Users,
             color: 'from-gray-500 to-gray-600',
             image: '',
-            displayName: phase.name,
+            displayName: phase.nom,
             description: phase.description
           })
         }));
@@ -151,7 +151,7 @@ export function PhasesScreen({ onNavigate }: PhasesScreenProps) {
                 <div className="p-6 bg-white">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600 font-semibold">
-                      {phase.matchCount} {phase.matchCount === 1 ? 'match' : 'matchs'} disponible{phase.matchCount > 1 ? 's' : ''}
+                      {phase.nombreMatchs} {phase.nombreMatchs === 1 ? 'match' : 'matchs'} disponible{phase.nombreMatchs > 1 ? 's' : ''}
                     </span>
                     <div className="text-emerald-600 group-hover:translate-x-2 transition-transform">
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

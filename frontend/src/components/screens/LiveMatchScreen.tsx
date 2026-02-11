@@ -5,7 +5,7 @@ import { Match } from '../../data/matches';
 import { api } from '../../services/api';
 
 interface LiveMatchScreenProps {
-  matchId: string;
+  matchId: string | number;
   onNavigate: (screen: Screen) => void;
 }
 

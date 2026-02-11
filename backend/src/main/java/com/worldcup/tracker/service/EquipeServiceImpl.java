@@ -24,6 +24,12 @@ public class EquipeServiceImpl implements IEquipeService {
     }
 
     @Override
+    public EquipeDTO getById(Long id) {
+        Equipe equipe = equipeRepository.findById(id).orElse(null);
+        return equipe != null ? mapToDTO(equipe) : null;
+    }
+
+    @Override
     public List<EquipeDTO> getAll() {
         return equipeRepository.findAll().stream()
                 .map(this::mapToDTO)

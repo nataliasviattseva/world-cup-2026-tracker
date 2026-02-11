@@ -9,6 +9,8 @@ public interface IEquipeService {
 
     Equipe getEntityById(Long id);
 
+    EquipeDTO getById(Long id);
+
     List<EquipeDTO> getAll();
 
     List<EquipeDTO> getByGroupe(String groupe);

@@ -6,7 +6,7 @@ import { api } from '../../services/api';
 import { Header } from '../Header';
 
 interface MatchDetailScreenProps {
-  matchId: string;
+  matchId: string | number;
   onNavigate: (screen: Screen) => void;
 }
 

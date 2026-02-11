@@ -1,4 +1,4 @@
-import { Trophy, Home, Calendar, ArrowLeft } from 'lucide-react';
+import { Trophy, Home, Calendar, ArrowLeft, Users, Award } from 'lucide-react';
 import { Screen } from '../App';
 
 interface HeaderProps {
@@ -86,6 +86,30 @@ export function Header({
             >
               <Calendar className="h-4 w-4" />
               <span className="hidden md:inline font-semibold">Matchs</span>
+            </button>
+
+            <button
+              onClick={() => onNavigate({ type: 'teams' })}
+              className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 ${
+                currentScreen === 'teams' || currentScreen === 'teamDetail'
+                  ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/30'
+                  : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-700'
+              }`}
+            >
+              <Users className="h-4 w-4" />
+              <span className="hidden md:inline font-semibold">Équipes</span>
+            </button>
+
+            <button
+              onClick={() => onNavigate({ type: 'standings' })}
+              className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 ${
+                currentScreen === 'standings'
+                  ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/30'
+                  : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-700'
+              }`}
+            >
+              <Award className="h-4 w-4" />
+              <span className="hidden md:inline font-semibold">Classements</span>
             </button>
           </nav>
         </div>

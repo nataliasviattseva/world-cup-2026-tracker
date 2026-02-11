@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Trophy, Calendar, Play } from 'lucide-react';
+import { Trophy, Calendar, Play, Users, Award } from 'lucide-react';
 import { Screen } from '../../App';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { Header } from '../Header';
@@ -177,7 +177,8 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        {/* Navigation Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <button
             onClick={() => onNavigate({ type: 'phases' })}
             className="group bg-white rounded-2xl shadow-lg shadow-emerald-500/5 p-8 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-300 border border-emerald-100 hover:-translate-y-1 text-left"
@@ -192,28 +193,81 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
                 </svg>
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Voir les matchs</h3>
-            <p className="text-gray-600">Consultez tous les matchs par phase de compétition</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Matchs</h3>
+            <p className="text-gray-600 text-sm">Tous les matchs par phase</p>
           </button>
 
           <button
-            onClick={() => onNavigate({ type: 'live', matchId: 'match-2' })}
-            className="group bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl shadow-lg shadow-emerald-500/20 p-8 hover:shadow-2xl hover:shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-1 text-left text-white"
+            onClick={() => onNavigate({ type: 'teams' })}
+            className="group bg-white rounded-2xl shadow-lg shadow-blue-500/5 p-8 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 border border-blue-100 hover:-translate-y-1 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl border border-white/30">
-                <Play className="h-8 w-8 text-white" />
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-2xl shadow-lg shadow-blue-500/30">
+                <Users className="h-8 w-8 text-white" />
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                </span>
-                <span className="text-sm font-semibold">EN DIRECT</span>
+              <div className="text-blue-600 group-hover:translate-x-2 transition-transform">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </div>
             </div>
-            <h3 className="text-2xl font-bold mb-2">Match en cours</h3>
-            <p className="text-emerald-100">USA 🇺🇸 1-1 🇨🇦 Canada</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Équipes</h3>
+            <p className="text-gray-600 text-sm">Voir toutes les équipes</p>
+          </button>
+
+          <button
+            onClick={() => onNavigate({ type: 'standings' })}
+            className="group bg-white rounded-2xl shadow-lg shadow-purple-500/5 p-8 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 border border-purple-100 hover:-translate-y-1 text-left"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-2xl shadow-lg shadow-purple-500/30">
+                <Award className="h-8 w-8 text-white" />
+              </div>
+              <div className="text-purple-600 group-hover:translate-x-2 transition-transform">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Classements</h3>
+            <p className="text-gray-600 text-sm">Classement des groupes</p>
+          </button>
+
+          <button
+            onClick={() => {
+              if (liveMatches.length > 0) {
+                onNavigate({ type: 'live', matchId: liveMatches[0].id });
+              }
+            }}
+            disabled={liveMatches.length === 0}
+            className={`group rounded-2xl shadow-lg p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-left ${
+              liveMatches.length > 0
+                ? 'bg-gradient-to-br from-emerald-500 to-green-600 shadow-emerald-500/20 hover:shadow-emerald-500/30 text-white'
+                : 'bg-gray-100 shadow-gray-500/5 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className={`p-4 rounded-2xl ${
+                liveMatches.length > 0
+                  ? 'bg-white/20 backdrop-blur-sm border border-white/30'
+                  : 'bg-gray-200'
+              }`}>
+                <Play className="h-8 w-8" />
+              </div>
+              {liveMatches.length > 0 && (
+                <div className="flex items-center space-x-2">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                  </span>
+                  <span className="text-sm font-semibold">DIRECT</span>
+                </div>
+              )}
+            </div>
+            <h3 className="text-xl font-bold mb-2">Match en cours</h3>
+            <p className={`text-sm ${liveMatches.length > 0 ? 'text-emerald-100' : 'text-gray-500'}`}>
+              {liveMatches.length > 0 ? 'Suivre le match' : 'Aucun match en cours'}
+            </p>
           </button>
         </div>
 
