@@ -2,25 +2,30 @@ package com.worldcup.tracker.service.impl;
 
 import com.worldcup.tracker.dto.MatchStatisticsDTO;
 import com.worldcup.tracker.model.StatistiqueMatch;
+import com.worldcup.tracker.repository.MatchRepository;
 import com.worldcup.tracker.repository.StatistiqueMatchRepository;
 import com.worldcup.tracker.service.StatistiqueMatchService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 public class MatchStatisticsServiceImpl implements StatistiqueMatchService {
 
     private final StatistiqueMatchRepository statisticsRepository;
+    private final MatchRepository matchRepository;
 
-    public MatchStatisticsServiceImpl(StatistiqueMatchRepository statisticsRepository) {
+    public MatchStatisticsServiceImpl(StatistiqueMatchRepository statisticsRepository,
+                                      MatchRepository matchRepository) {
         this.statisticsRepository = statisticsRepository;
+        this.matchRepository = matchRepository;
     }
 
 
     @Override
     public StatistiqueMatch getEntityById(Long id) {
-        return return statisticsRepository.findById(id).orElse(null);
+        return statisticsRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -45,22 +50,25 @@ public class MatchStatisticsServiceImpl implements StatistiqueMatchService {
 
     @Override
     public void delete(Long id) {
-
+        statisticsRepository.deleteById(id);
     }
 
     @Override
     public StatistiqueMatch getByMatchAndEquipe(Long matchId, Long equipeId) {
-        return statisticsRepository.findByMatchIdAndEquipeId(matchId, equipeId).orElse(null);
+        return null;
     }
 
     @Override
-    public void updateMatchStatistics(Long matchId, Long equipeId, int possession, int shots, int shotsOnTarget) {
-        StatistiqueMatch stats = statisticsRepository.findByMatchIdAndEquipeId(matchId, equipeId)
+    public void updateMatchStatistics(Long matchId, int possession, int shots, int shotsOnTarget) {
+        StatistiqueMatch stats = statisticsRepository.findByMatchId(matchId)
                 .orElse(new StatistiqueMatch());
 
-        stats.setMatchId(matchId);
-        stats.setEquipeId(equipeId);
-        stats.setPossessionEquipe1(possession);
+        // Relation ManyToOne
+        stats.setMatch(matchRepository.getReferenceById(matchId));
+
+        // BigDecimal conversion
+        stats.setPossessionEquipe1(BigDecimal.valueOf(possession));
+
         stats.setTirsEquipe1(shots);
         stats.setTirsCadrésEquipe1(shotsOnTarget);
 
