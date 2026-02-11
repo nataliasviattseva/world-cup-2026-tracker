@@ -12,7 +12,7 @@ spring:
     
   jpa:
     hibernate:
-      ddl-auto: create-drop   # Clean schema creation for each test run
+      ddl-auto: create   # Create schema without dropping (fresh DB per CI run)
     show-sql: true            # Show SQL queries during tests
     properties:
       hibernate:
