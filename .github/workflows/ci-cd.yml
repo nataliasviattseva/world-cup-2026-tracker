@@ -88,7 +88,7 @@ jobs:
       working-directory: backend
       
     - name: Run tests
-      run: ./mvnw test --batch-mode --no-transfer-progress
+      run: ./mvnw test --batch-mode --no-transfer-progress -Dspring.jpa.hibernate.ddl-auto=create
       working-directory: backend
       env:
         DB_URL: jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -131,6 +131,10 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('backend/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2-
         
+    - name: Ensure Maven wrapper is executable
+      run: chmod +x mvnw
+      working-directory: backend
+        
     - name: Build JAR
       run: ./mvnw clean package -DskipTests --batch-mode --no-transfer-progress
       working-directory: backend
@@ -169,6 +173,10 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('backend/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2-
+        
+    - name: Ensure Maven wrapper is executable
+      run: chmod +x mvnw
+      working-directory: backend
         
     - name: Run OWASP Check
       run: ./mvnw dependency-check:check --batch-mode --no-transfer-progress
@@ -271,6 +279,10 @@ jobs:
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        
+    - name: Ensure Maven wrapper is executable
+      run: chmod +x mvnw
+      working-directory: backend
         
     - name: Build production JAR
       run: ./mvnw clean package -DskipTests --batch-mode --no-transfer-progress
