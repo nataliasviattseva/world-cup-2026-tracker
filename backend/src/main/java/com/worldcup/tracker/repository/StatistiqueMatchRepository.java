@@ -10,9 +10,6 @@ import com.worldcup.tracker.model.StatistiqueMatch;
 public interface StatistiqueMatchRepository extends JpaRepository<StatistiqueMatch, Long> {
 
     List<StatistiqueMatch> findByMatchId(Long matchId);
-    List<StatistiqueMatch> findByEquipeId(Long equipeId);
-
-    Optional<StatistiqueMatch> findByMatchIdAndEquipeId(Long matchId, Long equipeId);
     List<StatistiqueMatch> findTop10ByOrderByTirsEquipe1Desc();
 
 
