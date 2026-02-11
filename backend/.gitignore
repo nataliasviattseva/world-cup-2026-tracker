@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Security - Local Configuration ###
+src/main/resources/application-local.properties
+*.env
+.env
+.env.local
+.env.*.local
