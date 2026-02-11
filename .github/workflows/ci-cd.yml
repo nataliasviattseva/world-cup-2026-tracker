@@ -72,7 +72,7 @@ jobs:
           timeout=$((timeout-2))
           [ $timeout -le 0 ] && echo "MySQL timeout" && exit 1
         done
-        echo  MySQL ready!"
+        echo "MySQL ready!"
         
     - name: Setup database
       run: |
