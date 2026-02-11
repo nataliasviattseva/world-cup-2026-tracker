@@ -79,7 +79,7 @@ jobs:
         
     - name: Validate Maven wrapper
       run: chmod +x mvnw
-      working-directory: .
+      working-directory: backend
       
     - name: Run tests
       run: ./mvnw test --batch-mode --no-transfer-progress
@@ -174,7 +174,8 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         
     - name: Build production JAR
-      run: ./mvnw -f backend/pom.xml clean package -DskipTests --batch-mode --no-transfer-progress
+      run: ./mvnw clean package -DskipTests --batch-mode --no-transfer-progress
+      working-directory: backend
       
     - name: Validate JAR was created
       run: |
