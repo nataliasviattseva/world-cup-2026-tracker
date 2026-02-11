@@ -1,0 +1,96 @@
+GROUPE
+Nom	Type	Taille	Min	Max	Description	Contraintes	Format
+id	Entier	—	1	—	Identifiant du groupe	PK, unique, obligatoire	numérique
+lettre	Chaîne	1	A	Z	Lettre du groupe	obligatoire, unique	“A”..“Z”
+nom	Chaîne	50	1	50	Nom du groupe	obligatoire	texte
+
+EQUIPE
+Nom	Type	Taille	Min	Max	Description	Contraintes	Format
+id	Entier	—	1	—	Identifiant équipe	PK, obligatoire	numérique
+nom	Chaîne	100	1	100	Nom de l’équipe	obligatoire	texte
+code_pays	Chaîne	3	3	3	Code pays ISO	obligatoire	“FRA”, “BRA”
+confederation	Chaîne	50	0	50	Confédération	—	texte
+drapeau_url	Chaîne	255	0	255	URL du drapeau	—	URL
+fifa_ranking	Entier	—	1	300	Classement FIFA	—	numérique
+
+STADE
+Nom	Type	Taille	Min	Max	Description	Contraintes	Format
+id	Entier	—	1	—	Identifiant stade	PK	numérique
+nom	Chaîne	150	1	150	Nom du stade	obligatoire	texte
+ville	Chaîne	100	0	100	Ville	—	texte
+pays	Chaîne	100	0	100	Pays	—	texte
+capacite	Entier	—	0	200000	Capacité	—	numérique
+latitude	Décimal	—	-90	90	Latitude	—	décimal
+longitude	Décimal	—	-180	180	Longitude	—	décimal
+timezone	Chaîne	50	0	50	Fuseau horaire	—	“UTC”, “America/…”
+
+PHASE_COMPETITION
+Nom	Type	Taille	Min	Max	Description	Contraintes	Format
+id	Entier	—	1	—	Identifiant phase	PK	numérique
+nom_phase	Chaîne	50	1	50	Nom de la phase	obligatoire	texte
+ordre	Entier	—	1	20	Ordre d’affichage	obligatoire	numérique
+date_debut	Date	—	—	—	Début de phase	—	YYYY-MM-DD
+date_fin	Date	—	—	—	Fin de phase	—	YYYY-MM-DD
+description	Texte	—	0	—	Description	—	texte
+nombre_matchs	Entier	—	0	200	Nombre de matchs	—	numérique
+
+MATCH
+Nom	Type	Taille	Min	Max	Description	Contraintes	Format
+id	Entier	—	1	—	Identifiant match	PK	numérique
+date_heure	DateHeure	—	—	—	Date et heure	obligatoire	YYYY-MM-DD HH:MM
+statut	Chaîne	20	1	20	Statut du match	obligatoire	A_VENIR, EN_COURS…
+score_equipe1	Entier	—	0	99	Score équipe 1	—	numérique
+score_equipe2	Entier	—	0	99	Score équipe 2	—	numérique
+prolongations	Booléen	—	0	1	Prolongations	—	vrai/faux
+temps_reglementaire	Entier	—	0	200	Temps de jeu	—	minutes
+tirs_au_but	Booléen	—	0	1	Tirs au but	—	vrai/faux
+groupe	Chaîne	10	0	10	Groupe (phase groupes)	—	texte
+  
+PARTICIPATION_MATCH (association)
+Nom	Type	Taille	Min	Max	Description	Contraintes	Format
+id	Entier	—	1	—	Identifiant participation	PK	numérique
+role	Chaîne	10	1	10	Rôle de l’équipe	obligatoire	“Equipe1”, “Equipe2”
+
+Règle métier :
+Un match possède exactement deux participations (cardinalité 2,2).
+
+EVENEMENT_MATCH
+Nom	Type	Taille	Min	Max	Description	Contraintes	Format
+id	Entier	—	1	—	Identifiant événement	PK	numérique
+type_evenement	Chaîne	50	1	50	Type (but, carton…)	obligatoire	texte
+minute	Entier	—	0	130	Minute	—	numérique
+minute_additionnelle	Entier	—	0	30	Temps additionnel	—	numérique
+joueur_nom	Chaîne	100	0	100	Nom du joueur	—	texte
+joueur_numero	Entier	—	0	99	Numéro du joueur	—	numérique
+description	Texte	—	0	—	Description	—	texte
+
+STATISTIQUE_MATCH
+Nom	Type	Taille	Min	Max	Description	Contraintes	Format
+id	Entier	—	1	—	Identifiant statistiques	PK	numérique
+possession_equipe1	Décimal	—	0	100	Possession équipe 1	—	%
+possession_equipe2	Décimal	—	0	100	Possession équipe 2	—	%
+tirs_equipe1	Entier	—	0	99	Tirs équipe 1	—	numérique
+tirs_equipe2	Entier	—	0	99	Tirs équipe 2	—	numérique
+cartons_jaunes_equipe1	Entier	—	0	10	Jaunes équipe 1	—	numérique
+cartons_jaunes_equipe2	Entier	—	0	10	Jaunes équipe 2	—	numérique
+cartons_rouges_equipe1	Entier	—	0	10	Rouges équipe 1	—	numérique
+cartons_rouges_equipe2	Entier	—	0	10	Rouges équipe 2	—	numérique
+
+Cardinalité :
+Un match possède 0 ou 1 statistique.
+
+CLASSEMENT_GROUPE
+Nom	Type	Taille	Min	Max	Description	Contraintes	Format
+id	Entier	—	1	—	Identifiant classement	PK	numérique
+matchs_joues	Entier	—	0	20	Matchs joués	—	numérique
+victoires	Entier	—	0	20	Victoires	—	numérique
+nuls	Entier	—	0	20	Nuls	—	numérique
+defaites	Entier	—	0	20	Défaites	—	numérique
+buts_pour	Entier	—	0	200	Buts marqués	—	numérique
+buts_contre	Entier	—	0	200	Buts encaissés	—	numérique
+difference_buts	Entier	—	-200	200	Différence	—	numérique
+points	Entier	—	0	60	Points	—	numérique
+position	Entier	—	1	64	Classement	—	numérique
+
+Règle métier :
+Une équipe apparaît une seule fois par groupe.

@@ -1,0 +1,54 @@
+
+# World Cup 2026 Tracker - Test Configuration
+spring:
+  application:
+    name: world-cup-2026-tracker-test
+    
+  datasource:
+    url: jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: User2025ensitech?
+    password: User2025ensitech?
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+  jpa:
+    hibernate:
+      ddl-auto: update   # Keep existing schema when using shared DB
+    show-sql: true            # Show SQL queries during tests
+    properties:
+      hibernate:
+        '[format_sql]': true
+        dialect: org.hibernate.dialect.MySQLDialect
+        
+  test:
+    database:
+      replace: none # Keep our configured datasource for tests
+      
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      
+  # Disable email for tests
+#   mail:
+#   # host: localhost
+#   # port: 25
+#     username: 
+#     password: 
+#     properties:
+#       mail:
+#         smtp:
+#           auth: false
+#           starttls:
+#             enable: false
+
+# # Test server configuration
+# server:
+#   port: 0  # Use random available port for parallel test execution
+
+# Enhanced logging for World Cup tracker testing
+logging:
+  level:
+    '[com.worldcup.tracker]': DEBUG
+    '[org.springframework.test]': INFO
+    '[org.hibernate.SQL]': DEBUG
+    '[org.hibernate.type.descriptor.sql.BasicBinder]': TRACE
+    '[org.springframework.web]': INFO
