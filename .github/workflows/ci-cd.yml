@@ -78,8 +78,8 @@ jobs:
       run: |
         mysql -h127.0.0.1 -P3306 -uroot -proot -e "
           CREATE DATABASE IF NOT EXISTS tracker_database;
-          CREATE USER IF NOT EXISTS '\${{ secrets.DB_USERNAME }}'@'%' IDENTIFIED BY '\${{ secrets.DB_PASSWORD }}';
-          GRANT ALL PRIVILEGES ON tracker_database.* TO '\${{ secrets.DB_USERNAME }}'@'%';
+          CREATE USER IF NOT EXISTS '${{ secrets.DB_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
+          GRANT ALL PRIVILEGES ON tracker_database.* TO '${{ secrets.DB_USERNAME }}'@'%';
           FLUSH PRIVILEGES;
         "
         
