@@ -5,19 +5,19 @@ spring:
     name: world-cup-2026-tracker-test
     
   datasource:
-    url: jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: User2025ensitech?
-    password: User2025ensitech?
+    url: ${DB_URL:jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     
   jpa:
     hibernate:
-      ddl-auto: update   # Keep existing schema when using shared DB
+      ddl-auto: create-drop   # Clean schema creation for each test run
     show-sql: true            # Show SQL queries during tests
     properties:
       hibernate:
         '[format_sql]': true
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
         
   test:
     database:
