@@ -1,6 +1,6 @@
 # World Cup 2026 Tracker
 
-[![GitHub release](https://img.shields.io/github/v/release/nataliasviattseva/world-cup-2026-tracker)](https://github.com/nataliasviattseva/world-cup-2026-tracker/releases)
+[![GitHub release](https://img.shields.io/github/v/release/nataliasviattseva/world-cup-2026-tracker?include_prereleases)](https://github.com/nataliasviattseva/world-cup-2026-tracker/releases)
 [![GitHub stars](https://img.shields.io/github/stars/nataliasviattseva/world-cup-2026-tracker?style=social)](https://github.com/nataliasviattseva/world-cup-2026-tracker/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/nataliasviattseva/world-cup-2026-tracker?style=social)](https://github.com/nataliasviattseva/world-cup-2026-tracker/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/nataliasviattseva/world-cup-2026-tracker)](https://github.com/nataliasviattseva/world-cup-2026-tracker/issues)
