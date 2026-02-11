@@ -110,19 +110,41 @@ EXIT;
 ```
 
 #### 3. Environment Configuration
-Create a `.env` file in the project root directory:
+
+**Backend Configuration:**
+
+Copy the backend environment template:
 ```bash
-cp .env.example .env
+cp backend/.env.example backend/.env
 ```
 
-Edit `.env` with your database credentials:
+Edit `backend/.env` with your database credentials:
 ```properties
-DB_URL=mysql_db
-allowPublicKeyRetrieval=true
+DB_URL=jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
 DB_USERNAME=wc_user
 DB_PASSWORD=your_secure_password
 MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_app_password
+```
+
+**Docker Compose Configuration (Optional):**
+
+If using Docker Compose for MySQL:
+```bash
+cp .env.example .env
+```
+
+Edit root `.env` for Docker Compose:
+```properties
+DB_NAME=tracker_database
+DB_USERNAME=wc_user
+DB_PASSWORD=your_secure_password
+DB_ROOT_PASSWORD=root
+```
+
+Then start MySQL with Docker:
+```bash
+docker-compose up -d
 ```
 
 #### 4. Start Backend

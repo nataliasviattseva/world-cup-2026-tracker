@@ -5,10 +5,10 @@ services:
     image: mysql:8.0
     container_name: worldcup-tracker-db
     environment:
-      MYSQL_DATABASE: tracker_database
-      MYSQL_USER: User2025ensitech?
-      MYSQL_PASSWORD: User2025ensitech?
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${DB_NAME:-tracker_database}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
     ports:
       - "3306:3306"
     volumes:

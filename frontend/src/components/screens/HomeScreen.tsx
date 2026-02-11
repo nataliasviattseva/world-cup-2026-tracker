@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Trophy, Calendar, Play, Users, Award } from 'lucide-react';
+import { Calendar, Play, Users, Award } from 'lucide-react';
 import { Screen } from '../../App';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { Header } from '../Header';

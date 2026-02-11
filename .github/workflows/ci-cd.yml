@@ -2,7 +2,7 @@ name: CI/CD - World Cup 2026 Tracker
 
 on:
   push:
-    branches: [ main, dev, test, feature/* ]
+    branches: [ main, test, dev ]
   pull_request:
     branches: [ main, test, dev ]
   workflow_dispatch: # Allow manual runs
@@ -24,8 +24,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: tracker_database
-          MYSQL_USER: User2025ensitech?
-          MYSQL_PASSWORD: User2025ensitech?
+          MYSQL_USER: ${{ secrets.DB_USERNAME }}
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 3306:3306
         options: >-
@@ -54,13 +54,15 @@ jobs:
           
     - name: Wait for MySQL to be ready
       run: |
-        timeout=60
+        timeout=120
         while ! mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --silent; do
           echo "Waiting for MySQL to start..."
           sleep 2
           timeout=$((timeout-2))
           if [ $timeout -le 0 ]; then
-            echo "MySQL failed to start within 60 seconds"
+            echo "MySQL failed to start within 120 seconds"
+            docker ps -a
+            docker logs $(docker ps -aq --filter ancestor=mysql:8.0) || true
             exit 1
           fi
         done
@@ -70,36 +72,36 @@ jobs:
       run: |
         mysql -h127.0.0.1 -P3306 -uroot -proot -e "
           CREATE DATABASE IF NOT EXISTS tracker_database;
-          CREATE USER IF NOT EXISTS 'User2025ensitech?'@'%' IDENTIFIED BY 'User2025ensitech?';
-          GRANT ALL PRIVILEGES ON tracker_database.* TO 'User2025ensitech?'@'%';
+          CREATE USER IF NOT EXISTS '${{ secrets.DB_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
+          GRANT ALL PRIVILEGES ON tracker_database.* TO '${{ secrets.DB_USERNAME }}'@'%';
           FLUSH PRIVILEGES;
         "
         
     - name: Validate Maven wrapper
       run: chmod +x mvnw
+      working-directory: .
       
     - name: Run tests
-      run: ./mvnw -f backend/pom.xml test --batch-mode --no-transfer-progress
+      run: ./mvnw test --batch-mode --no-transfer-progress
+      working-directory: backend
       env:
-        SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-        SPRING_DATASOURCE_USERNAME: User2025ensitech?
-        SPRING_DATASOURCE_PASSWORD: User2025ensitech?
-        SPRING_JPA_HIBERNATE_DDL_AUTO: update
-        SPRING_JPA_SHOW_SQL: true
+        DB_URL: jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+        MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         
-    - name: Validate test results
+    - name: Verify test reports exist
       run: |
-        if [ -f backend/target/surefire-reports/TEST-*.xml ]; then
-          echo "Test reports generated successfully"
-          TEST_COUNT=$(find backend/target/surefire-reports -name "TEST-*.xml" | wc -l)
-          echo "Found $TEST_COUNT test report files"
+        if [ -d "target/surefire-reports" ]; then
+          echo "Test reports directory exists"
+          ls -la target/surefire-reports/
         else
-          echo "No test reports found - tests may not have run properly"
+          echo "Test reports directory not found!"
+          exit 1
         fi
+      working-directory: backend
         
-    - name: Build application
-      run: ./mvnw -f backend/pom.xml clean package -DskipTests --batch-mode --no-transfer-progress
-      
     - name: Generate test report
       uses: dorny/test-reporter@v1
       if: success() || failure()
@@ -109,6 +111,10 @@ jobs:
         reporter: java-junit
         fail-on-error: true
         
+    - name: Build application
+      run: ./mvnw clean package -DskipTests --batch-mode --no-transfer-progress
+      working-directory: backend
+      
     - name: Upload build artifacts
       if: success()
       uses: actions/upload-artifact@v4
@@ -127,13 +133,22 @@ jobs:
         scan-type: 'fs'
         scan-ref: './backend'
         format: 'sarif'
-        output: 'backend/trivy-results.sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: Verify Trivy SARIF file exists
+      run: |
+        if [ -f "trivy-results.sarif" ]; then
+          echo "Trivy SARIF file generated successfully"
+          ls -lh trivy-results.sarif
+        else
+          echo "Warning: Trivy SARIF file not found"
+        fi
         
     - name: Upload Trivy scan results
       uses: github/codeql-action/upload-sarif@v4
-      if: always()
+      if: always() && hashFiles('trivy-results.sarif') != ''
       with:
-        sarif_file: 'backend/trivy-results.sarif'
+        sarif_file: 'trivy-results.sarif'
 
   # Deploy job (only runs on main branch)
   deploy:
