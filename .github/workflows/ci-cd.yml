@@ -150,7 +150,53 @@ jobs:
         retention-days: 30
 
   # ==========================================================================
-  # JOB 3: SECURITY - OWASP BACKEND
+  # JOB 3: CODE QUALITY - SONARCLOUD
+  # ==========================================================================
+  sonarcloud:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Setup JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: temurin
+        
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+        
+    - name: Cache Maven
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('backend/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2-
+        
+    - name: Ensure Maven wrapper is executable
+      run: chmod +x mvnw
+      working-directory: backend
+        
+    - name: Build and analyze with SonarCloud
+      run: ./mvnw clean verify sonar:sonar -Dsonar.projectKey=world-cup-2026-tracker -Dsonar.organization=nataliasviattseva -Dsonar.host.url=https://sonarcloud.io --batch-mode --no-transfer-progress
+      working-directory: backend
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # ==========================================================================
+  # JOB 4: SECURITY - OWASP BACKEND
   # ==========================================================================
   security-backend:
     name: OWASP Backend Scan
@@ -194,7 +240,7 @@ jobs:
         if-no-files-found: warn
 
   # ==========================================================================
-  # JOB 4: SECURITY - NPM AUDIT FRONTEND
+  # JOB 5: SECURITY - NPM AUDIT FRONTEND
   # ==========================================================================
   security-frontend:
     name: npm Audit Frontend
@@ -215,10 +261,14 @@ jobs:
       run: npm ci
       working-directory: frontend
       
-    - name: Run npm audit
-      run: npm audit --json > npm-audit.json || true
+    - name: Run npm audit (keep report)
+      run: npm audit --json > npm-audit.json
       working-directory: frontend
       continue-on-error: true
+      
+    - name: Fail on high/critical vulnerabilities
+      run: npm audit --audit-level=high
+      working-directory: frontend
       
     - name: Upload audit report
       if: always()
@@ -230,10 +280,33 @@ jobs:
         if-no-files-found: warn
 
   # ==========================================================================
-  # JOB 5: SECURITY - TRIVY SCANNER
+  # JOB 6: SECURITY - DEPENDENCY REVIEW (PR GATE)
   # ==========================================================================
-  security-trivy:
-    name: Trivy Security Scan
+  dependency-review:
+    name: Dependency Review (PR Gate)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Dependency Review
+      uses: actions/dependency-review-action@v4
+      with:
+        fail-on-severity: moderate
+        deny-licenses: GPL-3.0, AGPL-3.0
+        comment-summary-in-pr: always
+
+  # ==========================================================================
+  # JOB 7: SECURITY - TRIVY BACKEND SCANNER
+  # ==========================================================================
+  security-trivy-backend:
+    name: Trivy Backend Scan
     runs-on: ubuntu-latest
     needs: [build]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
@@ -248,21 +321,94 @@ jobs:
         scan-type: fs
         scan-ref: ./backend
         format: sarif
-        output: trivy-results.sarif
+        output: trivy-backend.sarif
         
     - name: Upload Trivy results
       uses: github/codeql-action/upload-sarif@v4
       if: always()
       with:
-        sarif_file: trivy-results.sarif
+        sarif_file: trivy-backend.sarif
 
   # ==========================================================================
-  # JOB 6: DEPLOY TO PRODUCTION
+  # JOB 8: SECURITY - TRIVY FRONTEND SCANNER
+  # ==========================================================================
+  security-trivy-frontend:
+    name: Trivy Frontend Scan
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: fs
+        scan-ref: ./frontend
+        format: sarif
+        output: trivy-frontend.sarif
+        
+    - name: Upload Trivy results
+      uses: github/codeql-action/upload-sarif@v4
+      if: always()
+      with:
+        sarif_file: trivy-frontend.sarif
+
+  # ==========================================================================
+  # JOB 9: SECURITY - CODEQL FRONTEND SAST
+  # ==========================================================================
+  security-codeql:
+    name: CodeQL Frontend SAST
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
+    
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v4
+      with:
+        languages: javascript-typescript
+        queries: security-and-quality
+        
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:javascript-typescript"
+
+  # ==========================================================================
+  # JOB 10: SECURITY - SECRETS SCAN
+  # ==========================================================================
+  secrets-scan:
+    name: Secrets Scan (gitleaks)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Run gitleaks
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ==========================================================================
+  # JOB 11: DEPLOY TO PRODUCTION
   # ==========================================================================
   deploy:
     name: Deploy to Production
     runs-on: ubuntu-latest
-    needs: [test, build, security-backend, security-frontend, security-trivy]
+    needs: [test, build, sonarcloud, security-backend, security-frontend, security-trivy-backend, security-trivy-frontend, security-codeql, secrets-scan]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: production
     
