@@ -37,7 +37,7 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public List<Match> getAll() {
-        return List.of();
+        return matchRepository.findAll();
     }
 
     @Override

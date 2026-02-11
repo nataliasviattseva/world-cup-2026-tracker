@@ -1,5 +1,6 @@
-package com.worldcup.tracker.service;
+package com.worldcup.tracker.service.impl;
 
+import com.worldcup.tracker.dto.MatchDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -212,14 +213,16 @@ public class MatchServiceTest {
         // Arrange
         String phaseName = "PHASE_GROUPES";
         List<Match> expectedMatches = List.of(testMatch);
-        when(matchRepository.findByPhaseNomOrderByDateHeureAsc(phaseName)).thenReturn(expectedMatches);
+        when(matchRepository.findByPhaseNomOrderByDateHeureAsc(phaseName))
+                .thenReturn(expectedMatches);
         
         // Act
-        List<Match> result = matchService.getMatchesByPhase(phaseName);
+        List<MatchDTO> result = matchService.getMatchesByPhase(phaseName);
         
         // Assert
         assertThat(result).hasSize(1);
-        assertThat(result).contains(testMatch);
+        assertThat(result.get(0).getTeamA()).isEqualTo("Brazil");
+        assertThat(result.get(0).getTeamB()).isEqualTo("Germany");
         verify(matchRepository).findByPhaseNomOrderByDateHeureAsc(phaseName);
     }
     
@@ -295,14 +298,16 @@ public class MatchServiceTest {
     void shouldGetLiveMatches() {
         // Arrange
         List<Match> liveMatches = List.of(testMatch);
-        when(matchRepository.findByStatutOrderByDateHeureAsc(StatutMatchEnum.EN_COURS)).thenReturn(liveMatches);
+        when(matchRepository.findByStatutOrderByDateHeureAsc(StatutMatchEnum.EN_COURS))
+                .thenReturn(liveMatches);
         
         // Act
-        List<Match> result = matchService.getLiveMatches();
+        List<MatchDTO> result = matchService.getLiveMatches();
         
         // Assert
         assertThat(result).hasSize(1);
-        assertThat(result).contains(testMatch);
+        assertThat(result.get(0).getTeamA()).isEqualTo("Brazil");
+        assertThat(result.get(0).getTeamB()).isEqualTo("Germany");
         verify(matchRepository).findByStatutOrderByDateHeureAsc(StatutMatchEnum.EN_COURS);
     }
     

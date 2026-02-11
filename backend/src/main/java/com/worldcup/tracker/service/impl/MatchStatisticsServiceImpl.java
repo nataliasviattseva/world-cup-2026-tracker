@@ -39,11 +39,6 @@ public class MatchStatisticsServiceImpl implements StatistiqueMatchService {
     }
 
     @Override
-    public List<StatistiqueMatch> getByEquipe(Long equipeId) {
-        return List.of();
-    }
-
-    @Override
     public StatistiqueMatch save(StatistiqueMatch statistique) {
         return statisticsRepository.save(statistique);
     }
@@ -60,17 +55,15 @@ public class MatchStatisticsServiceImpl implements StatistiqueMatchService {
 
     @Override
     public void updateMatchStatistics(Long matchId, int possession, int shots, int shotsOnTarget) {
-        StatistiqueMatch stats = statisticsRepository.findByMatchId(matchId)
-                .orElse(new StatistiqueMatch());
 
-        // Relation ManyToOne
+        List<StatistiqueMatch> list = statisticsRepository.findByMatchId(matchId);
+        StatistiqueMatch stats = list.isEmpty() ? new StatistiqueMatch() : list.get(0);
+
         stats.setMatch(matchRepository.getReferenceById(matchId));
 
-        // BigDecimal conversion
         stats.setPossessionEquipe1(BigDecimal.valueOf(possession));
-
         stats.setTirsEquipe1(shots);
-        stats.setTirsCadrésEquipe1(shotsOnTarget);
+        stats.setTirsCadresEquipe1(shotsOnTarget);
 
         statisticsRepository.save(stats);
 
@@ -88,8 +81,8 @@ public class MatchStatisticsServiceImpl implements StatistiqueMatchService {
     private MatchStatisticsDTO mapToDTO(StatistiqueMatch stats) {
         return MatchStatisticsDTO.builder()
                 .matchId(stats.getMatch().getId())
-                .possessionTeam1(stats.getPossessionEquipe1())
-                .possessionTeam2(stats.getPossessionEquipe2())
+                .possessionTeam1(stats.getPossessionEquipe1() != null ? stats.getPossessionEquipe1().intValue() : 0)
+                .possessionTeam2(stats.getPossessionEquipe2() != null ? stats.getPossessionEquipe2().intValue() : 0)
                 .shotsTeam1(stats.getTirsEquipe1())
                 .shotsTeam2(stats.getTirsEquipe2())
                 .cornersTeam1(stats.getCornersEquipe1())
