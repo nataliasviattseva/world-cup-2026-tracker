@@ -2,29 +2,24 @@ package com.worldcup.tracker.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.*;
-
-import com.worldcup.tracker.model.PhaseCompetition;
-import com.worldcup.tracker.service.IPhaseCompetitionService;
 import com.worldcup.tracker.dto.PhaseCompetitionDTO;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import com.worldcup.tracker.service.IPhaseService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/phases")
-@CrossOrigin(origins = "*")
 public class PhaseController {
 
-    private final IPhaseCompetitionService phaseCompetitionService;
+    private final IPhaseService phaseService;
 
-    public PhaseController(IPhaseCompetitionService phaseCompetitionService) {
-        this.phaseCompetitionService = phaseCompetitionService;
+    public PhaseController(IPhaseService phaseService) {
+        this.phaseService = phaseService;
     }
 
     @GetMapping
-    public List<PhaseCompetition> getAllPhases() {
-        return phaseCompetitionService.getAll();
+    public List<PhaseCompetitionDTO> getAllPhases() {
+        return phaseService.getAllPhases();
     }
 }

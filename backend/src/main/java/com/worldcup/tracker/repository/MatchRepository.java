@@ -41,4 +41,6 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     List<Match> findByGroupe(String groupe);
 
     List<Match> findByStatut(StatutMatchEnum statut);
+
+    long countByPhaseId(Long phaseId);
 }

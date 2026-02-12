@@ -1,5 +1,6 @@
 package com.worldcup.tracker.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,5 +34,6 @@ public class Equipe {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "groupe_id")
+    @JsonBackReference
     private Groupe groupe;
 }

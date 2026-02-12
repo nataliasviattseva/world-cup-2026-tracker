@@ -1,5 +1,6 @@
 package com.worldcup.tracker.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class Groupe {
     private String nom;
 
     @OneToMany(mappedBy = "groupe", cascade = CascadeType.ALL, orphanRemoval = false)
+    @JsonManagedReference
     @Builder.Default
     private List<Equipe> equipes = new ArrayList<>();
 }

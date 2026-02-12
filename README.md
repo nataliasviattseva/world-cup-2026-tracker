@@ -34,6 +34,8 @@ A comprehensive web application for tracking and following the FIFA World Cup 20
 ## Features
 
 - **Live Match Tracking**: Real-time match updates with scores and status
+- **Live Score API Integration**: Integrated with live-score-api.com for real-time data
+- **Smart Caching System**: Automatic response caching to improve performance and reduce API costs
 - **Competition Phases**: Navigate through all stages from group phase to final
 - **Team Management**: View all 48 qualified teams with FIFA rankings and confederations
 - **Group Standings**: Track team positions, points, and statistics for all groups
@@ -125,7 +127,11 @@ DB_USERNAME=wc_user
 DB_PASSWORD=your_secure_password
 MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_app_password
+LIVESCORE_API_KEY=your_api_key_from_live_score_api
+LIVESCORE_API_SECRET=your_api_secret_from_live_score_api
 ```
+
+> **Note**: Get your Live Score API credentials from [live-score-api.com](https://live-score-api.com). See [Live Score API Integration Guide](docs/LIVESCORE_API_INTEGRATION.md) for detailed setup instructions.
 
 **Docker Compose Configuration (Optional):**
 
@@ -235,6 +241,16 @@ http://localhost:8080/api
 #### Statistics
 - `GET /api/statistics/match/{matchId}` - Get match statistics
 
+#### Live Scores (External API Integration)
+- `GET /api/livescore/live` - Get all live match scores
+- `GET /api/livescore/competitions` - Get all competitions
+- `GET /api/livescore/matches/{matchId}` - Get live match details
+- `GET /api/livescore/teams/{teamId}` - Get live team details
+- `DELETE /api/livescore/cache` - Clear all cache
+- `DELETE /api/livescore/cache/{endpoint}` - Clear cache for endpoint
+
+> **Note**: Live Score API endpoints require valid API credentials. See [Live Score API Integration Guide](docs/LIVESCORE_API_INTEGRATION.md).
+
 ---
 
 ## Security
@@ -253,7 +269,7 @@ http://localhost:8080/api
 **Never commit the following to version control:**
 - Database passwords
 - Email credentials
-- API keys
+- API keys (including Live Score API credentials)
 - Secret tokens
 
 **Always use:**

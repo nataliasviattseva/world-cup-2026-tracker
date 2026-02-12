@@ -91,11 +91,13 @@ jobs:
       run: ./mvnw test --batch-mode --no-transfer-progress -Dspring.jpa.hibernate.ddl-auto=create
       working-directory: backend
       env:
-        DB_URL: jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-        DB_USERNAME: ${{ secrets.DB_USERNAME }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-        MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+        SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+        SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
+        SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        SPRING_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+        SPRING_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+        SPRING_JPA_HIBERNATE_DDL_AUTO: update
+        SPRING_JPA_SHOW_SQL: true
         
     - name: Generate test report
       uses: dorny/test-reporter@v1

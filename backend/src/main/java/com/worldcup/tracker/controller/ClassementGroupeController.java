@@ -9,7 +9,6 @@ import com.worldcup.tracker.service.IClassementGroupeService;
 
 @RestController
 @RequestMapping("/api/standings")
-@CrossOrigin(origins = "*")
 public class ClassementGroupeController {
 
     private final IClassementGroupeService classementService;
