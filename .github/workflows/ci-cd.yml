@@ -160,6 +160,22 @@ jobs:
     needs: [build]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
     
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: tracker_database
+          MYSQL_USER: ${{ secrets.DB_USERNAME }}
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -171,7 +187,27 @@ jobs:
       with:
         java-version: 17
         distribution: temurin
-        
+
+    - name: Wait for MySQL
+      run: |
+        timeout=120
+        while ! mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --silent; do
+          echo "Waiting for MySQL..."
+          sleep 2
+          timeout=$((timeout-2))
+          [ $timeout -le 0 ] && echo "MySQL timeout" && exit 1
+        done
+        echo "MySQL ready!"
+
+    - name: Setup database
+      run: |
+        mysql -h127.0.0.1 -P3306 -uroot -proot -e "
+          CREATE DATABASE IF NOT EXISTS tracker_database;
+          CREATE USER IF NOT EXISTS '${{ secrets.DB_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
+          GRANT ALL PRIVILEGES ON tracker_database.* TO '${{ secrets.DB_USERNAME }}'@'%';
+          FLUSH PRIVILEGES;
+        "
+
     - name: Cache SonarCloud packages
       uses: actions/cache@v4
       with:
@@ -196,6 +232,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/tracker_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+        SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
+        SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        SPRING_JPA_HIBERNATE_DDL_AUTO: create
+        SPRING_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+        SPRING_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
 
   # ==========================================================================
   # JOB 4: SECURITY - OWASP BACKEND
