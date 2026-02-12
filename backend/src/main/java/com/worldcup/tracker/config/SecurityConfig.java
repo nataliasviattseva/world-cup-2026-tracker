@@ -20,7 +20,7 @@ public class SecurityConfig {
                 "http://localhost:5173",
                 "http://localhost:3000",
                 "http://localhost:3001",
-                "https://frontend-stage-cbce.up.railway.app"));
+                "https://world-cup.up.railway.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
