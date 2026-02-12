@@ -43,6 +43,10 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<MatchDTO> getAllMatches() {
         return matchRepository.findAll().stream()
+                .filter(m -> m.getPhase() != null &&
+                        m.getEquipe1() != null &&
+                        m.getEquipe2() != null &&
+                        m.getStade() != null)
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }

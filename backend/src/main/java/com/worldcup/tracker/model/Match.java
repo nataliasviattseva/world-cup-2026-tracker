@@ -14,7 +14,7 @@ import java.util.List;
         @Index(name = "idx_match_date_heure", columnList = "date_heure"),
         @Index(name = "idx_match_statut", columnList = "statut")
 })
-@Check(constraints = "equipe1_id <> equipe2_id")
+@Check(constraints = "(equipe1_id IS NULL OR equipe2_id IS NULL OR equipe1_id <> equipe2_id)")
 @Getter
 @Setter
 @NoArgsConstructor

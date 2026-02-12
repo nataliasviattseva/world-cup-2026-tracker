@@ -9,7 +9,7 @@ import com.worldcup.tracker.service.external.dto.ApiTeam;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
-public class FootballApiMapper {
+public class WorldCupMapper {
 
     public Match toMatch(ApiMatchResponse api) {
 
