@@ -286,5 +286,86 @@ export const api = {
     const response = await fetch(`${API_BASE_URL}/standings/group/${encodeURIComponent(groupName)}`);
     if (!response.ok) throw new Error('Failed to fetch group standings');
     return response.json();
+  },
+
+  // ── Live Score API Integration ───────────────────────────────────────
+
+  getLiveScores: async (): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/live`);
+    if (!response.ok) throw new Error('Failed to fetch live scores');
+    return response.json();
+  },
+
+  getCompetitions: async (): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/competitions`);
+    if (!response.ok) throw new Error('Failed to fetch competitions');
+    return response.json();
+  },
+
+  getFixtures: async (): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/fixtures`);
+    if (!response.ok) throw new Error('Failed to fetch fixtures');
+    return response.json();
+  },
+  
+  getMatchHistory: async (): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/history`);
+    if (!response.ok) throw new Error('Failed to fetch match history');
+    return response.json();
+  },
+
+  getLiveMatchDetails: async (matchId: string): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/matches/${matchId}`);
+    if (!response.ok) throw new Error('Failed to fetch live match details');
+    return response.json();
+  },
+  
+  getLiveMatchEvents: async (matchId: string): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/matches/${matchId}/events`);
+    if (!response.ok) throw new Error('Failed to fetch match events');
+    return response.json();
+  },
+  
+  getLiveMatchLineups: async (matchId: string): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/matches/${matchId}/lineups`);
+    if (!response.ok) throw new Error('Failed to fetch match lineups');
+    return response.json();
+  },
+  
+  getLiveMatchCommentary: async (matchId: string): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/matches/${matchId}/commentary`);
+    if (!response.ok) throw new Error('Failed to fetch match commentary');
+    return response.json();
+  },
+
+  getLiveTeams: async (): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/teams`);
+    if (!response.ok) throw new Error('Failed to fetch teams');
+    return response.json();
+  },
+
+  getLiveTeamDetails: async (teamId: string): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/teams/${teamId}`);
+    if (!response.ok) throw new Error('Failed to fetch live team details');
+    return response.json();
+  },
+  
+  getHeadToHead: async (team1Id: string, team2Id: string): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/head2head?team1Id=${team1Id}&team2Id=${team2Id}`);
+    if (!response.ok) throw new Error('Failed to fetch head to head');
+    return response.json();
+  },
+
+  getCompetitionStandings: async (competitionId: string): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/standings/${competitionId}`);
+    if (!response.ok) throw new Error('Failed to fetch competition standings');
+    return response.json();
+  },
+
+  clearLiveScoreCache: async (): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/livescore/cache`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error('Failed to clear cache');
   }
 };

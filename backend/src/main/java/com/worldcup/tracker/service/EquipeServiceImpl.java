@@ -80,6 +80,15 @@ public class EquipeServiceImpl implements IEquipeService {
     }
 
     private EquipeDTO mapToDTO(Equipe equipe) {
+        EquipeDTO.GroupeBasicDTO groupeDTO = null;
+        if (equipe.getGroupe() != null) {
+            groupeDTO = EquipeDTO.GroupeBasicDTO.builder()
+                    .id(equipe.getGroupe().getId())
+                    .lettre(equipe.getGroupe().getLettre())
+                    .nom(equipe.getGroupe().getNom())
+                    .build();
+        }
+        
         return EquipeDTO.builder()
                 .id(equipe.getId())
                 .nom(equipe.getNom())
@@ -88,6 +97,7 @@ public class EquipeServiceImpl implements IEquipeService {
                 .groupeCode(equipe.getGroupeCode())
                 .fifaRanking(equipe.getFifaRanking())
                 .confederation(equipe.getConfederation())
+                .groupe(groupeDTO)
                 .build();
     }
 }

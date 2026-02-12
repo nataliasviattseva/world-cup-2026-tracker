@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Calendar, Play, Users, Award } from 'lucide-react';
+import { Calendar, Play, Users, Award, Layers } from 'lucide-react';
 import { Screen } from '../../App';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { Header } from '../Header';
@@ -234,40 +234,21 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
           </button>
 
           <button
-            onClick={() => {
-              if (liveMatches.length > 0) {
-                onNavigate({ type: 'live', matchId: liveMatches[0].id });
-              }
-            }}
-            disabled={liveMatches.length === 0}
-            className={`group rounded-2xl shadow-lg p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-left ${
-              liveMatches.length > 0
-                ? 'bg-gradient-to-br from-emerald-500 to-green-600 shadow-emerald-500/20 hover:shadow-emerald-500/30 text-white'
-                : 'bg-gray-100 shadow-gray-500/5 text-gray-400 cursor-not-allowed'
-            }`}
+            onClick={() => onNavigate({ type: 'worldcupgroups' })}
+            className="group bg-white rounded-2xl shadow-lg shadow-orange-500/5 p-8 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-300 border border-orange-100 hover:-translate-y-1 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className={`p-4 rounded-2xl ${
-                liveMatches.length > 0
-                  ? 'bg-white/20 backdrop-blur-sm border border-white/30'
-                  : 'bg-gray-200'
-              }`}>
-                <Play className="h-8 w-8" />
+              <div className="bg-gradient-to-br from-orange-500 to-red-600 p-4 rounded-2xl shadow-lg shadow-orange-500/30">
+                <Layers className="h-8 w-8 text-white" />
               </div>
-              {liveMatches.length > 0 && (
-                <div className="flex items-center space-x-2">
-                  <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                  </span>
-                  <span className="text-sm font-semibold">DIRECT</span>
-                </div>
-              )}
+              <div className="text-orange-600 group-hover:translate-x-2 transition-transform">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
             </div>
-            <h3 className="text-xl font-bold mb-2">Match en cours</h3>
-            <p className={`text-sm ${liveMatches.length > 0 ? 'text-emerald-100' : 'text-gray-500'}`}>
-              {liveMatches.length > 0 ? 'Suivre le match' : 'Aucun match en cours'}
-            </p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Groupes World Cup</h3>
+            <p className="text-gray-600 text-sm">Les 12 groupes A-L</p>
           </button>
         </div>
 

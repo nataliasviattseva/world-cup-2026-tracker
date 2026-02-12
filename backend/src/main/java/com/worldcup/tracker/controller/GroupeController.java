@@ -9,7 +9,6 @@ import com.worldcup.tracker.service.IGroupeService;
 
 @RestController
 @RequestMapping("/api/groups")
-@CrossOrigin(origins = "*")
 public class GroupeController {
 
     private final IGroupeService groupeService;

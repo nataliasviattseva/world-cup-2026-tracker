@@ -1,4 +1,4 @@
-import { Trophy, Home, Calendar, ArrowLeft, Users, Award } from 'lucide-react';
+import { Trophy, Home, Calendar, ArrowLeft, Users, Award, Layers, Radio } from 'lucide-react';
 import { Screen } from '../App';
 
 interface HeaderProps {
@@ -77,6 +77,18 @@ export function Header({
             </button>
 
             <button
+              onClick={() => onNavigate({ type: 'liveMatches' })}
+              className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 ${
+                currentScreen === 'liveMatches' || currentScreen === 'liveEvents'
+                  ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/30'
+                  : 'text-gray-600 hover:bg-red-50 hover:text-red-600'
+              }`}
+            >
+              <Radio className="h-4 w-4" />
+              <span className="hidden md:inline font-semibold">En direct</span>
+            </button>
+
+            <button
               onClick={() => onNavigate({ type: 'phases' })}
               className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 ${
                 currentScreen === 'phases' || currentScreen === 'matches' || currentScreen === 'detail' || currentScreen === 'live'
@@ -110,6 +122,18 @@ export function Header({
             >
               <Award className="h-4 w-4" />
               <span className="hidden md:inline font-semibold">Classements</span>
+            </button>
+
+            <button
+              onClick={() => onNavigate({ type: 'worldcupgroups' })}
+              className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 ${
+                currentScreen === 'worldcupgroups'
+                  ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/30'
+                  : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-700'
+              }`}
+            >
+              <Layers className="h-4 w-4" />
+              <span className="hidden md:inline font-semibold">Groupes</span>
             </button>
           </nav>
         </div>

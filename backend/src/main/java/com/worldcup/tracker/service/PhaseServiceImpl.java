@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.worldcup.tracker.dto.PhaseCompetitionDTO;
 import com.worldcup.tracker.model.PhaseCompetition;
 import com.worldcup.tracker.model.PhaseNomEnum;
+import com.worldcup.tracker.repository.MatchRepository;
 import com.worldcup.tracker.repository.PhaseCompetitionRepository;
 
 @Service
@@ -15,11 +16,14 @@ public class PhaseServiceImpl implements IPhaseService {
 
     private final PhaseCompetitionRepository phaseRepository;
     private final PhaseCompetitionServiceImpl phaseCompetitionService;
+    private final MatchRepository matchRepository;
 
     public PhaseServiceImpl(PhaseCompetitionRepository phaseRepository,
-                           PhaseCompetitionServiceImpl phaseCompetitionService) {
+                           PhaseCompetitionServiceImpl phaseCompetitionService,
+                           MatchRepository matchRepository) {
         this.phaseRepository = phaseRepository;
         this.phaseCompetitionService = phaseCompetitionService;
+        this.matchRepository = matchRepository;
     }
 
     @Override
@@ -55,6 +59,8 @@ public class PhaseServiceImpl implements IPhaseService {
     }
 
     private PhaseCompetitionDTO mapToDTO(PhaseCompetition phase) {
+        // Dynamically count matches instead of relying on static field
+        long matchCount = matchRepository.countByPhaseId(phase.getId());
         return PhaseCompetitionDTO.builder()
                 .id(phase.getId())
                 .nom(convertPhaseNom(phase.getNom()))
@@ -62,7 +68,7 @@ public class PhaseServiceImpl implements IPhaseService {
                 .dateDebut(phase.getDateDebut())
                 .dateFin(phase.getDateFin())
                 .description(phase.getDescription())
-                .nombreMatchs(phase.getNombreMatchs())
+                .nombreMatchs((int) matchCount)
                 .build();
     }
 
