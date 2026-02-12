@@ -13,12 +13,15 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:5173", "http://localhost:3000")
+                registry.addMapping("/**")
+                        .allowedOrigins(
+                                "http://localhost:5173",
+                                "http://localhost:3000",
+                                "http://localhost:3001",
+                                "https://frontend-stage-cbce.up.railway.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(false)
-                        .maxAge(3600);
+                        .allowCredentials(false);
             }
         };
     }
