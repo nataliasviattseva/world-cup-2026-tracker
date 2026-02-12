@@ -1,6 +1,9 @@
 import { Match, MatchEvent, MatchStatus } from '../data/matches';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
+console.log("API_BASE_URL =", API_BASE_URL);
 
 // ── Frontend types ───────────────────────────────────────────────────
 
