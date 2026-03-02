@@ -1,8 +1,9 @@
-package com.worldcup.tracker.service;
+package com.worldcup.tracker.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.worldcup.tracker.service.EquipeService;
 import org.springframework.stereotype.Service;
 
 import com.worldcup.tracker.dto.EquipeDTO;

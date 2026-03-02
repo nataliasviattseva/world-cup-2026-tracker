@@ -12,15 +12,13 @@ public interface IStatistiqueMatchService {
 
     List<StatistiqueMatch> getByMatch(Long matchId);
 
-    List<StatistiqueMatch> getByEquipe(Long equipeId);
-
     StatistiqueMatch save(StatistiqueMatch statistique);
 
     void delete(Long id);
 
     StatistiqueMatch getByMatchAndEquipe(Long matchId, Long equipeId);
 
-    void updateMatchStatistics(Long matchId, Long equipeId, int possession, int shots, int shotsOnTarget);
+    void updateMatchStatistics(Long matchId, int possession, int shots, int shotsOnTarget);
 
     List<StatistiqueMatch> getTopPerformances(String statType, int limit);
 }

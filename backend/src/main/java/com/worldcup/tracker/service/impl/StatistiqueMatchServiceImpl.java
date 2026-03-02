@@ -1,8 +1,9 @@
-package com.worldcup.tracker.service;
+package com.worldcup.tracker.service.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.worldcup.tracker.service.StatistiqueMatchService;
 import org.springframework.stereotype.Service;
 
 import com.worldcup.tracker.model.StatistiqueMatch;
@@ -33,11 +34,6 @@ public class StatistiqueMatchServiceImpl implements IStatistiqueMatchService {
     }
 
     @Override
-    public List<StatistiqueMatch> getByEquipe(Long equipeId) {
-        return List.of();
-    }
-
-    @Override
     public StatistiqueMatch save(StatistiqueMatch statistique) {
         return statistiqueRepository.save(statistique);
     }
@@ -54,7 +50,7 @@ public class StatistiqueMatchServiceImpl implements IStatistiqueMatchService {
     }
 
     @Override
-    public void updateMatchStatistics(Long matchId, Long equipeId, int possession, int shots, int shotsOnTarget) {
+    public void updateMatchStatistics(Long matchId, int possession, int shots, int shotsOnTarget) {
         List<StatistiqueMatch> statsList = getByMatch(matchId);
         if (!statsList.isEmpty()) {
             StatistiqueMatch stats = statsList.get(0); // Get the first (and should be only) stat record
